@@ -12,6 +12,7 @@
 
 #include "prompt.h"
 #include "metacommand.h"
+#include "table.h"
 
 #include "init.h"
 
@@ -45,7 +46,7 @@ static void print_metacommands(){
     printf("Avaible metacommands: \n");
     size_t metaCommandsNumber = sizeof(metaCommands)/sizeof(metaCommands[0]);
     for(int i = 0; i<metaCommandsNumber; i++){
-        printf("%s", metaCommands[i]);
+        printf("%s\n", metaCommands[i]);
     }
 }
 
@@ -105,7 +106,15 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
             return META_COMMAND_FAILURE;
         }
     }
-    else {
+    if(strcmp(inputBuffer->buffer, ".table") == 0){
+        switch (create_table())
+        {
+            case (TABLE_OPERATION_SUCCESS):
+                return META_COMMAND_SUCCESS;
+            case (TABLE_OPERATION_FAILURE):
+                return META_COMMAND_FAILURE;
+        }
+    } else {
         return META_COMMAND_UNRECOGNIZED_COMMAND;
     } 
 }
@@ -176,6 +185,202 @@ DatabaseSelection select_database(){
             return DATABASE_SELECTION_FAILURE;
         }
     }
+}
+
+FILE* select_table(){
+    if(strlen(working_dir)<2 || strlen(database)<2){
+        printf("Select a working directory and a database first.\n");
+        return NULL;
+    } else {
+
+        //insert file name
+        char table_name[32];
+        printf("Select table with name: ");
+        fgets(table_name, 32, stdin);
+        strtok(table_name, "\n");
+
+        //build path for file location
+        char full_path[1024];
+        strcpy(full_path, working_dir);
+        strcat(full_path, database);
+        strcat(full_path, "/");
+        strcat(full_path, table_name);
+        strcat(full_path, ".csv");
+
+        //check if table exists
+        if (stat(full_path, &st) == 0) {
+            FILE *fp;
+            fp=fopen(full_path, "a+");
+
+            //load first line, containing record structure
+            char first_line[1024];
+            fgets(first_line, 1024, fp);
+
+            //keep head of record structure
+            column *header = NULL;
+            header = malloc(sizeof(column));
+
+            // record structure builder
+            column *cursor;
+            cursor = header;
+
+            //scan first line
+            char c;
+            char column[32];
+            int column_index = 0;
+            for(int i=0; i<strlen(first_line); i++){
+                c=first_line[i];
+
+                //build column string by dividing per separators and newlines
+                if (c != ';' && c!='\n'){
+                    column[column_index]=c;
+                    column_index++;
+                } else {
+                    //check if column isn't empty
+                    if(strlen(column)>0){       
+                        column[column_index]='\0';
+
+                        //add column to record structure
+                        strcpy(cursor->column_name, column);
+                        cursor->next = malloc(sizeof(column));
+                        cursor = cursor->next;
+                        
+                        //reset column
+                        column_index=0;
+                        strcpy(column, "");
+                    }
+                }
+            }
+
+            //init the cursor again to print out columns
+            cursor = header;
+            int column_counter = 1;
+
+            while(cursor->next!=NULL){
+                printf("%d. %s\n",column_counter, cursor->column_name);
+                ++column_counter;
+                cursor=cursor->next;
+            }
+
+            //selection of the index
+            char index[32];
+            printf("Select index number [1-%d] ", column_counter);
+            fgets(index, 32, stdin);
+            strtok(index, "\n");
+            int index_number = atol(index);
+        
+            
+        } else {
+            printf("Do you want to create it? [y/n]\n");
+            char answer = getchar();
+            if(answer=='y'){ create_table(); select_table();}
+            else{return NULL;}
+        }
+
+    }
+}
+
+TableOperationResult create_table(){
+    if(strlen(working_dir)<2 || strlen(database)<2){
+        printf("Select a working directory and a database first.\n");
+        return TABLE_OPERATION_FAILURE;
+    } else {
+        //insert file name
+        char table_name[32];
+        printf("Create table with name: ");
+        fgets(table_name, 32, stdin);
+        strtok(table_name, "\n");
+
+        //build path for file location
+        char full_path[1024];
+        strcpy(full_path, working_dir);
+        strcat(full_path, database);
+        strcat(full_path, "/");
+        strcat(full_path, table_name);
+        strcat(full_path, ".csv");
+
+        //check if table already exists
+        if (stat(full_path, &st) == 0) {
+            printf("A table with this name already exists.\n");
+            return TABLE_OPERATION_FAILURE;
+        } else {
+            //create table
+            FILE *fp;
+            fp=fopen(full_path, "a+");
+
+            //define data structure invocation
+            column *table_initializer;
+            table_initializer=malloc(sizeof(column));
+            table_initializer=define_data_structure();
+
+            //compose first line of file with data structure
+            char line[1024];
+            strcpy(line, "");
+
+            while(table_initializer->next != NULL){
+                strcat(line, table_initializer->column_name);
+                strcat(line, ";");
+
+                table_initializer=table_initializer->next;
+            }
+            line[strlen(line)] = '\n';
+
+            //write first line of file with column names
+            fprintf(fp, line);
+            printf("Table %s created.\n", table_name);
+            printf("Data structure of the table: %s\n\n", line);
+
+            //close file
+            fclose(fp);
+
+            //deallocate memory
+            free(table_initializer);
+
+            return TABLE_OPERATION_SUCCESS;
+        }
+
+    }
+
+}
+column* define_data_structure(){
+
+    //initialize head of the list
+    column *head = NULL;
+    head=malloc(sizeof(column));
+
+    //initialize first field of the list with id
+    strcpy(head->column_name, "id");
+    column *current = head;
+    
+    //the first position of the cursor is the head, so it won't break
+    while (current != NULL) {
+
+        //allocate memory for the cursor
+        current->next=malloc(sizeof(column));
+        //switch to the next position of the list
+        current = current->next;
+    
+        //acquire from stdin
+        char column_name[32];
+        printf("Insert next column - (Insert '.exit' to end)\n");
+        fgets(column_name, 32, stdin);
+        strtok(column_name, "\n");
+
+        //check if keyword exit is being pressed
+        if(strcmp(column_name, ".exit") == 0){
+            printf("Columns defined.\n");
+            //closes the list
+            current=NULL;
+            break;
+        }
+        //add new field to the list
+        else
+        {
+            strcpy(current->column_name, column_name);
+            printf("Column inserted: %s\n", current->column_name);
+        }
+    }
+    return head;
 }
 
 

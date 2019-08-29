@@ -7,7 +7,7 @@ typedef enum {
   META_COMMAND_EXIT
 } MetaCommandResult;
 
-const char* metaCommands[] = {".help", ".exit", ".workingdir", ".db"};
+const char* metaCommands[] = {".help", ".exit", ".workingdir", ".db", ".table"};
 
 static void print_metacommands();
 
