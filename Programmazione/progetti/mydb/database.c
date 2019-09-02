@@ -325,7 +325,17 @@ void select_table(){
                 }
                 
             }
+
+            //bnode *root;
+            //root = malloc(sizeof(bnode));
+
+            //bnode *tree_cursor;
+            //tree_cursor=root;
             
+            printf("Median between leaf 1 and 2: %s\n", findMedian(leaves[0], leaves[1]));
+            printf("Median between leaf 2 and 3: %s\n", findMedian(leaves[1], leaves[2]));
+
+
 
 
 
@@ -337,6 +347,37 @@ void select_table(){
         }
 
     }
+}
+
+const char* findMedian(bplusnode* leaf1, bplusnode* leaf2){
+
+    bnode *node;
+    node = malloc(sizeof(node));
+
+    char field[32];
+    for(int i = 0; i<strlen(leaf1->value)-1; i++){
+            
+        if(leaf1->value[i] == leaf2->value[i]){
+            field[i]=leaf1->value[i];
+        } else {
+            field[i] = '\0';
+            break;
+        }
+    }
+    if(strlen(field)<1){
+        field[0] = (leaf1->value[0] + leaf2->value[0])/2;
+        field[1] = '\0';
+    }
+
+    strcpy(node->value, field);
+    if(strcmp(field, leaf1->value)>0){
+        node->left=leaf1;
+        node->right=leaf2;
+    } else {
+        node->left=leaf2;
+        node->right=leaf1;
+    }
+
 }
 
 bplusnode* build_leaf(record* start, int index_number){

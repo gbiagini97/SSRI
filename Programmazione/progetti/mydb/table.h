@@ -40,3 +40,4 @@ const char* getFieldFromLine(char *line, int index_number);
 static int stringCompare(const void* str1, const void* str2);
 
 bplusnode* build_leaf(record* start, int index_number);
+const char* findMedian(bplusnode* leaf1, bplusnode* leaf2);
