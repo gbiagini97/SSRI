@@ -299,32 +299,32 @@ void select_table(){
             //now from records_head we have a sorted list by index
             int leaves_number = sort_records(records_head, index_number, table_size); 
             
-            
-            bplusnode *leaves[leaves_number];
-            *leaves=malloc(leaves_number * sizeof(bplusnode));
+//*****************B+NODE IMPLEMENTATION***********************
 
-            if(leaves_number>0) {
-                leaves[0] = build_leaf(records_head, index_number);
-                for(int i = 1; i<leaves_number; i++){
-                    leaves[i] = malloc(sizeof(bplusnode));
-                    leaves[i] = build_leaf(leaves[i-1]->start->next, index_number);
-                }
-            }
-            
-            for(int i = 0; i<leaves_number; i++){
-                printf("Leaf %d:\n", i);
-                printf("    Value: %s\n", leaves[i]->value);
-                printf("    Number of records: %d\n", leaves[i]->n_records);
-                printf("    Records: \n");
-                record *leaf_cursor;
-                leaf_cursor=leaves[i]->start;
-                for(int k = 0; k<leaves[i]->n_records; k++){
-                    printf("    record %d: \n", k);
-                    printf("        %s\n", leaf_cursor->line);
-                    leaf_cursor=leaf_cursor->next;
-                }
-                
-            }
+            //bplusnode *leaves[leaves_number];
+            //*leaves=malloc(leaves_number * sizeof(bplusnode));
+            //if(leaves_number>0) {
+            //    leaves[0] = build_leaf(records_head, index_number);
+            //    for(int i = 1; i<leaves_number; i++){
+            //        leaves[i] = malloc(sizeof(bplusnode));
+            //        leaves[i] = build_leaf(leaves[i-1]->start->next, index_number);
+            //    }
+            //}
+            //
+            //for(int i = 0; i<leaves_number; i++){
+            //    printf("Leaf %d:\n", i);
+            //    printf("    Value: %s\n", leaves[i]->value);
+            //    printf("    Number of records: %d\n", leaves[i]->n_records);
+            //    printf("    Records: \n");
+            //    record *leaf_cursor;
+            //    leaf_cursor=leaves[i]->start;
+            //    for(int k = 0; k<leaves[i]->n_records; k++){
+            //        printf("    record %d: \n", k);
+            //        printf("        %s\n", leaf_cursor->line);
+            //        leaf_cursor=leaf_cursor->next;
+            //    }
+            //    
+            //}
 
             //bnode *root;
             //root = malloc(sizeof(bnode));
@@ -332,12 +332,39 @@ void select_table(){
             //bnode *tree_cursor;
             //tree_cursor=root;
             
-            printf("Median between leaf 1 and 2: %s\n", findMedian(leaves[0], leaves[1]));
-            printf("Median between leaf 2 and 3: %s\n", findMedian(leaves[1], leaves[2]));
+            //printf("Median between leaf 1 and 2: %s\n", findMedian(leaves[0], leaves[1]));
+            //printf("Median between leaf 2 and 3: %s\n", findMedian(leaves[1], leaves[2]));
+
+//*****************B+NODE IMPLEMENTATION***********************
+
+        int leaves_counter = 0;
+        bnode *leaves[leaves_number];
+        *leaves = malloc(leaves_number * sizeof(leaves));
+
+        record_cursor = records_head;
+        while(record_cursor->next != NULL && leaves_counter<leaves_number){
+
+            leaves[leaves_counter] = malloc(sizeof(bnode));
+            strcpy(leaves[leaves_counter]->value, record_cursor->line);
+            leaves[leaves_counter]->left=NULL;
+            leaves[leaves_counter]->right=NULL;
+            
+            printf("Leaf %d:\n", leaves_counter);
+            printf("    Value: %s\n", leaves[leaves_counter]->value);
 
 
+            ++leaves_counter;
+            record_cursor=record_cursor->next;
+        }
+
+        bnode *tree_root;
+        tree_root = malloc(sizeof(bnode));
+        tree_root=build_tree(leaves, index_number, leaves_number);
+
+        printf("TREE ROOT: %s\n", tree_root->value);
 
 
+       
 
             
         } else {
@@ -349,12 +376,129 @@ void select_table(){
     }
 }
 
+bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
+
+    bnode *head;
+    head = malloc(sizeof(bnode));
+    
+    int leaf_indicator = 0;
+
+    if(nodes_number>1 && nodes_number%2==0){
+        printf("PARI: Nodi rimanenti %d\n", nodes_number);
+        bnode *new_nodes[(nodes_number/2)-1]; 
+        *new_nodes=malloc((nodes_number/2)-1 * sizeof(bnode));
+
+        for(int i=0; i<=(nodes_number/2)-1; i++){
+            printf("Creating father node between %s and %s\n", leaves[leaf_indicator]->value, leaves[leaf_indicator+1]->value);
+
+            new_nodes[i]=malloc(sizeof(bnode));
+
+            char val1[32];
+            char val2[32];
+            strcpy(val1, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
+            strcpy(val2, getFieldFromLine(leaves[leaf_indicator+1]->value, index_number));
+
+            printf("Val1: %s\n", val1);
+            printf("Val2: %s\n", val2);
+
+            char median[32];
+            strcpy(median, findMedianValue(val1, val2));
+            
+            printf("Find Median Value output: %s\n", findMedianValue(val1, val2));
+            
+            strcpy(new_nodes[i]->value, findMedianValue(val1, val2));
+            
+            
+            
+
+            printf("Middle value created: %s\n", new_nodes[i]->value);
+
+            new_nodes[i]->left=leaves[leaf_indicator];
+            new_nodes[i]->right=leaves[leaf_indicator+1];
+
+            leaf_indicator++;
+            leaf_indicator++;
+        }
+
+        head = build_tree(new_nodes, index_number, (nodes_number/2)-1);
+
+    } 
+    else if(nodes_number>1 && nodes_number%2==1) {
+        printf("DISPARI: Nodi rimanenti %d\n", nodes_number);
+        bnode *new_nodes[(nodes_number/2)];
+        *new_nodes=malloc((nodes_number/2) * sizeof(bnode));
+        for(int i=0; i<=(nodes_number/2); i++){
+
+            if(leaves[leaf_indicator+1] != NULL){
+                strcpy(new_nodes[i]->value, findMedianValue(
+                    getFieldFromLine(leaves[leaf_indicator]->value, index_number), getFieldFromLine(leaves[leaf_indicator+1]->value, index_number)));
+            
+                new_nodes[i]->left=leaves[leaf_indicator];
+                new_nodes[i]->right=leaves[leaf_indicator+1];
+
+                leaf_indicator++;
+                leaf_indicator++;
+
+            } else
+            {
+                strcpy(new_nodes[i]->value, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
+                new_nodes[i]->left=leaves[leaf_indicator];
+                new_nodes[i]->right=NULL;
+
+                leaf_indicator++;
+            }
+            
+        }
+        
+        head = build_tree(new_nodes, index_number, (nodes_number/2)+1);
+    }
+    else if(nodes_number==1)
+    {
+        strcpy(head->value, findMedianValue(
+                getFieldFromLine(leaves[leaf_indicator]->value, index_number), getFieldFromLine(leaves[leaf_indicator+1]->value, index_number)));
+        head->left=leaves[leaf_indicator];
+        head->right=leaves[leaf_indicator+1];
+
+        return head;
+    }
+    
+}
+
+const char* findMedianValue(const char* val1, const char* val2){
+    char field[32];
+    char (*p)[32];
+    p=&field;
+
+    printf("Finding median value between: %s and %s\n", val1, val2);
+
+    for(int i = 0; i<strlen(val1)-1; i++){
+        printf("Letters found: %c, %c\n", val1[i], val2[i]);
+        if(val1[i]==val2[i]){
+            field[i]=val1[i];
+        } else {
+            field[i] = '\0';
+            break;
+        }
+    }
+
+    printf("Middle field: %s, with length: %d\n", field, strlen(field));
+
+     if(strlen(field)<1){
+        field[0] = (val1[0] + val2[0])/2;
+        field[1] = '\0';
+        printf("Artificially calculated middle field: %s\n", field);
+    }
+
+        return *p;
+}
+
 const char* findMedian(bplusnode* leaf1, bplusnode* leaf2){
 
     bnode *node;
     node = malloc(sizeof(node));
 
     char field[32];
+    char (*p)[32];
     for(int i = 0; i<strlen(leaf1->value)-1; i++){
             
         if(leaf1->value[i] == leaf2->value[i]){
@@ -369,14 +513,10 @@ const char* findMedian(bplusnode* leaf1, bplusnode* leaf2){
         field[1] = '\0';
     }
 
-    strcpy(node->value, field);
-    if(strcmp(field, leaf1->value)>0){
-        node->left=leaf1;
-        node->right=leaf2;
-    } else {
-        node->left=leaf2;
-        node->right=leaf1;
-    }
+    p=&field;
+    return *p;
+
+
 
 }
 
@@ -444,37 +584,43 @@ int sort_records(record *head, int index_number, int n_records){
     }
 
     free(record_cursor1);
-    return uniques;
+    //return uniques;
+
+    return arr_counter;
 }
 
 const char* getFieldFromLine(char *line, int index_number){
-int index_counter = 0;
+    int index_counter = 0;
     char c;
     char field[32];
     char (*p)[32] = malloc(sizeof(field));
     int field_index = 0;
 
-    for(int i=0; i<strlen(line); i++){
-        c=line[i];
+    if(index_number != -1) {
+        for(int i=0; i<strlen(line); i++){
+            c=line[i];
 
-        //build field string by dividing per separators and newlines
-        if (c != ',' && c!='\n'){
-            field[field_index]=c;
-            field_index++;
-        } else {      
-            field[field_index]='\0';
-            index_counter++;
+            //build field string by dividing per separators and newlines
+            if (c != ',' && c!='\n'){
+                field[field_index]=c;
+                field_index++;
+            } else {      
+                field[field_index]='\0';
+                index_counter++;
 
-            if(index_counter==index_number){
-                p=&field;
-                break;
-            } else {
-                field_index=0;
-                strcpy(field, "");
+                if(index_counter==index_number){
+                    p=&field;
+                    break;
+                } else {
+                    field_index=0;
+                    strcpy(field, "");
+                }
             }
         }
-    }
     return *p;
+    } else {
+        return line;
+    }
 }
 
 void sort(column *head, int table_size){
