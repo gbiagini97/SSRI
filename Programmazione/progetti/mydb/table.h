@@ -44,3 +44,4 @@ const char* findMedian(bplusnode* leaf1, bplusnode* leaf2);
 bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);
 const char* getFieldFromLine(char *line, int index_number);
 const char* findMedianValue(const char* val1, const char* val2);
+void traversalPreorder(bnode *node);

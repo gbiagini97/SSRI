@@ -18,6 +18,7 @@
 #include "init.h"
 
 //*************INIT*******************
+static Mode mode = NORMAL;
 static char working_dir[1024];
 static char database[256];
 const char prefix[] = "gbdb-\0";
@@ -42,16 +43,45 @@ printf("Insert .help to see avaible metacommands\n");
 printf("\n\n");
 }
 
-static void print_metacommands(){
-
-    printf("Avaible metacommands: \n");
-    size_t metaCommandsNumber = sizeof(metaCommands)/sizeof(metaCommands[0]);
-    for(int i = 0; i<metaCommandsNumber; i++){
-        printf("%s\n", metaCommands[i]);
-    }
+const char* getModeName(Mode mode) 
+{
+   switch (mode) 
+   {
+      case NORMAL: return "NORMAL";
+      case DB: return "DB";
+      case TABLE: return "TABLE";
+   }
+}
+const char* getModeInputPrompt(Mode mode) 
+{
+   switch (mode) 
+   {
+      case NORMAL: return "gbdb >";
+      case DB: return "db-mode >";
+      case TABLE: return "table-mode >";
+   }
+}
+const char* getModeMetaCommands(Mode mode) 
+{
+   switch (mode) 
+   {
+      case NORMAL: return *normalModeMetaCommands;
+      case DB: return *dbModeMetaCommands;
+      case TABLE: return *tableModeMetaCommands;
+   }
 }
 
-static void print_prompt(){ printf("gbdb > "); }
+
+static void print_metacommands(){
+
+    size_t size = sizeof(getModeMetaCommands(mode))/sizeof(getModeMetaCommands(mode)[0]);
+    for(int i=0; i<size; i++){
+        printf("%s\n", getModeMetaCommands(mode)[i]);
+    }
+    
+}
+
+static void print_prompt(){ printf("%s ", getModeInputPrompt(mode)); }
 
 InputBuffer* new_input_buffer() {
   InputBuffer* input_buffer = (InputBuffer*)malloc(sizeof(InputBuffer));
@@ -79,49 +109,108 @@ void close_input_buffer(InputBuffer* input_buffer) {
 }
 
 MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
-    if(strcmp(inputBuffer->buffer, ".exit") == 0){
-        close_input_buffer(inputBuffer);
-        return META_COMMAND_EXIT;
-    }
-    if(strcmp(inputBuffer->buffer, ".help") == 0){
-        print_metacommands();
-        return META_COMMAND_SUCCESS;
-    }
-    if(strcmp(inputBuffer->buffer, ".workingdir") == 0){
-        switch (define_working_dir())
-        {
-        case (DIRECTORY_SELECTION_SUCCESS):
+    //*********************NORMAL MODE*********************
+    if(strcmp(getModeName(mode), "NORMAL") == 0) {
+        if(strcmp(inputBuffer->buffer, ".exit") == 0){
+            close_input_buffer(inputBuffer);
+            return META_COMMAND_EXIT;
+        }
+        if(strcmp(inputBuffer->buffer, ".help") == 0){
+            printf("This is the Normal Mode.\n");
+            printf("Here you can switch modes and exit the database.\n");
+            print_metacommands();
             return META_COMMAND_SUCCESS;
-        case (DIRECTORY_SELECTION_FAILURE):
-            return META_COMMAND_FAILURE;
+        }
+        if(strcmp(inputBuffer->buffer, ".db-mode") == 0){
+            mode = DB;
+            return META_COMMAND_SUCCESS;
+        }
+        if(strcmp(inputBuffer->buffer, ".table-mode") == 0){
+            mode = TABLE;
+            return META_COMMAND_SUCCESS;
+        }
+        else {
+            return META_COMMAND_UNRECOGNIZED_COMMAND;
         }
     }
-    if(strcmp(inputBuffer->buffer, ".db") == 0){
-        switch (select_database())
-        {
-        case (DATABASE_SELECTED):
+    //*********************NORMAL MODE*********************
+
+
+    //*********************DB MODE*********************
+    else if(strcmp(getModeName(mode), "DB") == 0) {
+        
+        if(strcmp(inputBuffer->buffer, ".exit") == 0){
+            mode = NORMAL;
             return META_COMMAND_SUCCESS;
-        case (DATABASE_CREATED):
-            return META_COMMAND_SUCCESS;
-        case (DATABASE_SELECTION_FAILURE):
-            return META_COMMAND_FAILURE;
         }
-    }
-    if(strcmp(inputBuffer->buffer, ".table") == 0){
-        switch (create_table())
-        {
-            case (TABLE_OPERATION_SUCCESS):
+        if(strcmp(inputBuffer->buffer, ".help") == 0){
+            printf("This is the Db Mode.\n");
+            printf("First thing first define a working directory, then you can start playing around\n");
+            printf("Here you can print, select and create databases.\n");
+            print_metacommands();
+            return META_COMMAND_SUCCESS;
+        }
+        if(strcmp(inputBuffer->buffer, ".workingdir") == 0){
+            switch (define_working_dir())
+            {
+            case (DIRECTORY_SELECTION_SUCCESS):
                 return META_COMMAND_SUCCESS;
-            case (TABLE_OPERATION_FAILURE):
+            case (DIRECTORY_SELECTION_FAILURE):
                 return META_COMMAND_FAILURE;
+            }
+        }
+        if(strcmp(inputBuffer->buffer, ".db") == 0){
+            switch (select_database())
+            {
+            case (DATABASE_SELECTED):
+                return META_COMMAND_SUCCESS;
+            case (DATABASE_CREATED):
+                return META_COMMAND_SUCCESS;
+            case (DATABASE_SELECTION_FAILURE):
+                return META_COMMAND_FAILURE;
+            }
+        }
+        else {
+            return META_COMMAND_UNRECOGNIZED_COMMAND;
         }
     }
-    if(strcmp(inputBuffer->buffer, ".select") == 0){
-        select_table();
-        printf("done.");
-    } else {
-        return META_COMMAND_UNRECOGNIZED_COMMAND;
-    } 
+    //*********************DB MODE*********************
+
+
+    //*********************TABLE MODE*********************
+    else if(strcmp(getModeName(mode), "TABLE") == 0) {
+        if(strcmp(inputBuffer->buffer, ".exit") == 0){
+            mode = NORMAL;
+            return META_COMMAND_SUCCESS;
+        }
+        if(strcmp(inputBuffer->buffer, ".help") == 0){
+            printf("This is the Table Mode.\n");
+            if(strlen(working_dir)<1 && strlen(database)<1){
+                printf("Make sure you've selected a working directory and a database.\n");
+            } else {
+                printf("Working directory: %s\n", working_dir);
+                printf("Database selected: %s\n", database);
+            }
+            printf("Here you can create tables, make indexes, queries and much more!\n");
+            print_metacommands();
+            return META_COMMAND_SUCCESS;
+        }
+        if(strcmp(inputBuffer->buffer, ".table") == 0){
+            switch (create_table())
+            {
+                case (TABLE_OPERATION_SUCCESS):
+                    return META_COMMAND_SUCCESS;
+                case (TABLE_OPERATION_FAILURE):
+                    return META_COMMAND_FAILURE;
+            }
+        }
+        if(strcmp(inputBuffer->buffer, ".select") == 0){
+            select_table();
+        } else {
+            return META_COMMAND_UNRECOGNIZED_COMMAND;
+        }
+    }
+    //*********************TABLE MODE********************* 
 }
 
 DirectorySelection define_working_dir(){
@@ -298,120 +387,68 @@ void select_table(){
 
             //now from records_head we have a sorted list by index
             int leaves_number = sort_records(records_head, index_number, table_size); 
+
+            int leaves_counter = 0;
+            bnode *leaves[leaves_number];
+
+            //build leaves
+            record_cursor = records_head;
+            while(record_cursor->next != NULL && leaves_counter<leaves_number){
+
+                leaves[leaves_counter] = malloc(sizeof(bnode));
+                strcpy(leaves[leaves_counter]->value, record_cursor->line);
+                leaves[leaves_counter]->left=NULL;
+                leaves[leaves_counter]->right=NULL;
+                
+                printf("Leaf %d:\n", leaves_counter);
+                printf("    Value: %s\n", leaves[leaves_counter]->value);
+
+                leaves_counter++;
+                record_cursor=record_cursor->next;
+            }
             
-//*****************B+NODE IMPLEMENTATION***********************
+            //build tree
+            bnode *tree_root;
+            tree_root = malloc(sizeof(bnode));
+            tree_root=build_tree(leaves, index_number, leaves_number);
 
-            //bplusnode *leaves[leaves_number];
-            //*leaves=malloc(leaves_number * sizeof(bplusnode));
-            //if(leaves_number>0) {
-            //    leaves[0] = build_leaf(records_head, index_number);
-            //    for(int i = 1; i<leaves_number; i++){
-            //        leaves[i] = malloc(sizeof(bplusnode));
-            //        leaves[i] = build_leaf(leaves[i-1]->start->next, index_number);
-            //    }
-            //}
-            //
-            //for(int i = 0; i<leaves_number; i++){
-            //    printf("Leaf %d:\n", i);
-            //    printf("    Value: %s\n", leaves[i]->value);
-            //    printf("    Number of records: %d\n", leaves[i]->n_records);
-            //    printf("    Records: \n");
-            //    record *leaf_cursor;
-            //    leaf_cursor=leaves[i]->start;
-            //    for(int k = 0; k<leaves[i]->n_records; k++){
-            //        printf("    record %d: \n", k);
-            //        printf("        %s\n", leaf_cursor->line);
-            //        leaf_cursor=leaf_cursor->next;
-            //    }
-            //    
-            //}
+            //print tree
+            traversalPreorder(tree_root);
+                
+            } else {
+                printf("Do you want to create it? [y/n]\n");
+                char answer = getchar();
+                if(answer=='y'){ create_table(); select_table();}
+            }
 
-            //bnode *root;
-            //root = malloc(sizeof(bnode));
-
-            //bnode *tree_cursor;
-            //tree_cursor=root;
-            
-            //printf("Median between leaf 1 and 2: %s\n", findMedian(leaves[0], leaves[1]));
-            //printf("Median between leaf 2 and 3: %s\n", findMedian(leaves[1], leaves[2]));
-
-//*****************B+NODE IMPLEMENTATION***********************
-
-        int leaves_counter = 0;
-        bnode *leaves[leaves_number];
-        *leaves = malloc(leaves_number * sizeof(leaves));
-
-        record_cursor = records_head;
-        while(record_cursor->next != NULL && leaves_counter<leaves_number){
-
-            leaves[leaves_counter] = malloc(sizeof(bnode));
-            strcpy(leaves[leaves_counter]->value, record_cursor->line);
-            leaves[leaves_counter]->left=NULL;
-            leaves[leaves_counter]->right=NULL;
-            
-            printf("Leaf %d:\n", leaves_counter);
-            printf("    Value: %s\n", leaves[leaves_counter]->value);
-
-
-            ++leaves_counter;
-            record_cursor=record_cursor->next;
         }
+}
 
-        bnode *tree_root;
-        tree_root = malloc(sizeof(bnode));
-        tree_root=build_tree(leaves, index_number, leaves_number);
+void traversalPreorder(bnode *node){
+    if(node==NULL){ return; }
 
-        printf("TREE ROOT: %s\n", tree_root->value);
-
-
-       
-
-            
-        } else {
-            printf("Do you want to create it? [y/n]\n");
-            char answer = getchar();
-            if(answer=='y'){ create_table(); select_table();}
-        }
-
-    }
+    printf("%s\n", node->value);
+    traversalPreorder(node->left);
+    traversalPreorder(node->right);
 }
 
 bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
 
     bnode *head;
     head = malloc(sizeof(bnode));
-    
     int leaf_indicator = 0;
 
-    if(nodes_number>1 && nodes_number%2==0){
-        printf("PARI: Nodi rimanenti %d\n", nodes_number);
+    if(nodes_number>2 && nodes_number%2==0){
         bnode *new_nodes[(nodes_number/2)-1]; 
-        *new_nodes=malloc((nodes_number/2)-1 * sizeof(bnode));
 
         for(int i=0; i<=(nodes_number/2)-1; i++){
-            printf("Creating father node between %s and %s\n", leaves[leaf_indicator]->value, leaves[leaf_indicator+1]->value);
-
             new_nodes[i]=malloc(sizeof(bnode));
 
             char val1[32];
             char val2[32];
             strcpy(val1, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
             strcpy(val2, getFieldFromLine(leaves[leaf_indicator+1]->value, index_number));
-
-            printf("Val1: %s\n", val1);
-            printf("Val2: %s\n", val2);
-
-            char median[32];
-            strcpy(median, findMedianValue(val1, val2));
-            
-            printf("Find Median Value output: %s\n", findMedianValue(val1, val2));
-            
             strcpy(new_nodes[i]->value, findMedianValue(val1, val2));
-            
-            
-            
-
-            printf("Middle value created: %s\n", new_nodes[i]->value);
 
             new_nodes[i]->left=leaves[leaf_indicator];
             new_nodes[i]->right=leaves[leaf_indicator+1];
@@ -419,29 +456,31 @@ bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
             leaf_indicator++;
             leaf_indicator++;
         }
-
-        head = build_tree(new_nodes, index_number, (nodes_number/2)-1);
+        head = build_tree(new_nodes, -1, (nodes_number/2));
 
     } 
-    else if(nodes_number>1 && nodes_number%2==1) {
-        printf("DISPARI: Nodi rimanenti %d\n", nodes_number);
+    else if(nodes_number>2 && nodes_number%2==1) {
         bnode *new_nodes[(nodes_number/2)];
-        *new_nodes=malloc((nodes_number/2) * sizeof(bnode));
-        for(int i=0; i<=(nodes_number/2); i++){
+        
+        for(int i=0; i<=(nodes_number/2); i++) {
+            new_nodes[i]=malloc(sizeof(bnode));
 
-            if(leaves[leaf_indicator+1] != NULL){
-                strcpy(new_nodes[i]->value, findMedianValue(
-                    getFieldFromLine(leaves[leaf_indicator]->value, index_number), getFieldFromLine(leaves[leaf_indicator+1]->value, index_number)));
-            
+            if(i!=(nodes_number/2)){
+                char val1[32];
+                char val2[32];
+                strcpy(val1, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
+                strcpy(val2, getFieldFromLine(leaves[leaf_indicator+1]->value, index_number));
+                strcpy(new_nodes[i]->value, findMedianValue(val1, val2));
+
                 new_nodes[i]->left=leaves[leaf_indicator];
                 new_nodes[i]->right=leaves[leaf_indicator+1];
 
                 leaf_indicator++;
                 leaf_indicator++;
 
-            } else
-            {
+            } else {
                 strcpy(new_nodes[i]->value, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
+                
                 new_nodes[i]->left=leaves[leaf_indicator];
                 new_nodes[i]->right=NULL;
 
@@ -449,13 +488,18 @@ bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
             }
             
         }
-        
-        head = build_tree(new_nodes, index_number, (nodes_number/2)+1);
+        head = build_tree(new_nodes, -1, (nodes_number/2)+1);
+
     }
-    else if(nodes_number==1)
+    else if(nodes_number==2)
     {
-        strcpy(head->value, findMedianValue(
-                getFieldFromLine(leaves[leaf_indicator]->value, index_number), getFieldFromLine(leaves[leaf_indicator+1]->value, index_number)));
+        char val1[32];
+        char val2[32];
+        strcpy(val1, getFieldFromLine(leaves[leaf_indicator]->value, index_number));
+        strcpy(val2, getFieldFromLine(leaves[leaf_indicator+1]->value, index_number));
+
+        strcpy(head->value, findMedianValue(val1, val2));
+
         head->left=leaves[leaf_indicator];
         head->right=leaves[leaf_indicator+1];
 
@@ -469,10 +513,11 @@ const char* findMedianValue(const char* val1, const char* val2){
     char (*p)[32];
     p=&field;
 
-    printf("Finding median value between: %s and %s\n", val1, val2);
+    //printf("Finding median value between: %s and %s\n", val1, val2);
 
+    field[0] = '\0';
     for(int i = 0; i<strlen(val1)-1; i++){
-        printf("Letters found: %c, %c\n", val1[i], val2[i]);
+        //printf("Letters found: %c, %c\n", val1[i], val2[i]);
         if(val1[i]==val2[i]){
             field[i]=val1[i];
         } else {
@@ -481,12 +526,10 @@ const char* findMedianValue(const char* val1, const char* val2){
         }
     }
 
-    printf("Middle field: %s, with length: %d\n", field, strlen(field));
 
-     if(strlen(field)<1){
+    if(field[0] == '\0') {
         field[0] = (val1[0] + val2[0])/2;
         field[1] = '\0';
-        printf("Artificially calculated middle field: %s\n", field);
     }
 
         return *p;
@@ -767,7 +810,7 @@ int main() {
             switch (execute_metacommand(input_buffer))
             {
             case (META_COMMAND_EXIT):
-                printf("au_revoir!\n");
+                printf("Au revoir!\n");
                 exit(EXIT_SUCCESS);
             case (META_COMMAND_SUCCESS):
                 continue;
