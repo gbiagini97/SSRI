@@ -20,16 +20,9 @@ typedef struct S_BNode {
 //***************BTREE**************
 
 
-//***************B+TREE**************
-typedef struct S_BPlusNode {
-    char value[1024];
-    struct S_Record *start;
-    int n_records;
-} bplusnode;
-//***************B+TREE**************
-
 typedef enum { TABLE_OPERATION_SUCCESS, TABLE_OPERATION_FAILURE} TableOperationResult;
 
+void print_tables();
 void select_table();
 TableOperationResult create_table();
 column* define_data_structure();
@@ -38,8 +31,6 @@ void sort(column *head, int table_size);
 int sort_records(record *head, int index_number, int n_records);
 static int stringCompare(const void* str1, const void* str2);
 
-bplusnode* build_leaf(record* start, int index_number);
-const char* findMedian(bplusnode* leaf1, bplusnode* leaf2);
 
 bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);
 const char* getFieldFromLine(char *line, int index_number);

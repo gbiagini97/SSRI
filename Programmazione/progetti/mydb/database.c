@@ -205,6 +205,10 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
             print_metacommands();
             return META_COMMAND_SUCCESS;
         }
+        if(strcmp(inputBuffer->buffer, ".tables") == 0){
+            print_tables();
+            return META_COMMAND_SUCCESS;
+        }
         if(strcmp(inputBuffer->buffer, ".table") == 0){
             switch (create_table())
             {
@@ -305,6 +309,23 @@ DatabaseSelection select_database(){
     }
 }
 
+void print_tables(){
+    if(strlen(working_dir)<2 && strlen(database)<2){
+        printf("Select a working directory and a database first.\n");
+    } else {
+        char command[256];
+        strcpy(command, "cd ");
+        strcat(command, working_dir);
+        strcat(command, "/");
+        strcat(command, database);
+        strcat(command, "/");
+        strcat(command, " && ls | rev | cut -c5- | rev");
+        printf("Tables in database %s :\n", database);
+        system(command);
+    }
+
+}
+
 void select_table(){
     if(strlen(working_dir)<2 || strlen(database)<2){
         printf("Select a working directory and a database first.\n");
@@ -399,6 +420,7 @@ void select_table(){
 
             while(fgets(record_line, 1024, fp)){
                 strcpy(record_cursor->line, record_line);
+                strtok(record_cursor->line, "\n");
                 record_cursor->next = malloc(sizeof(record));
                 record_cursor = record_cursor->next;
                 strcpy(record_line, "");
@@ -559,53 +581,6 @@ const char* findMedianValue(const char* val1, const char* val2){
         return *p;
 }
 
-const char* findMedian(bplusnode* leaf1, bplusnode* leaf2){
-
-    bnode *node;
-    node = malloc(sizeof(node));
-
-    char field[32];
-    char (*p)[32];
-    for(int i = 0; i<strlen(leaf1->value)-1; i++){
-            
-        if(leaf1->value[i] == leaf2->value[i]){
-            field[i]=leaf1->value[i];
-        } else {
-            field[i] = '\0';
-            break;
-        }
-    }
-    if(strlen(field)<1){
-        field[0] = (leaf1->value[0] + leaf2->value[0])/2;
-        field[1] = '\0';
-    }
-
-    p=&field;
-    return *p;
-
-
-
-}
-
-bplusnode* build_leaf(record* start, int index_number){
-    bplusnode *leaf;
-    leaf=malloc(sizeof(leaf));
-    leaf->n_records=0;
-    leaf->start=start;
-    strcpy(leaf->value, getFieldFromLine(start->line, index_number));
-    
-    record *rcursor;
-    rcursor=start;
-    while(rcursor->next!=NULL){
-        if(strcmp(leaf->value, getFieldFromLine(rcursor->line, index_number)) == 0) {
-            leaf->n_records++;
-            rcursor=rcursor->next;
-        } else {
-            break;
-        }
-    }
-    return leaf;
-}
 
 int sort_records(record *head, int index_number, int n_records){
     char *arr[n_records];
