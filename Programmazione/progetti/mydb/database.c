@@ -19,9 +19,11 @@
 
 //*************INIT*******************
 static Mode mode = NORMAL;
+const char prefix[] = "gbdb-\0";
 static char working_dir[1024];
 static char database[256];
-const char prefix[] = "gbdb-\0";
+static char table[32];
+static bnode *tree;
 struct stat st = {0};
 //*************INIT*******************
 
@@ -145,7 +147,7 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
     //*********************DB MODE*********************
     else if(strcmp(getModeName(mode), "DB") == 0) {
         
-        if(strcmp(inputBuffer->buffer, ".exit") == 0){
+        if(strcmp(inputBuffer->buffer, ".back") == 0){
             mode = NORMAL;
             return META_COMMAND_SUCCESS;
         }
@@ -189,7 +191,7 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
 
     //*********************TABLE MODE*********************
     else if(strcmp(getModeName(mode), "TABLE") == 0) {
-        if(strcmp(inputBuffer->buffer, ".exit") == 0){
+        if(strcmp(inputBuffer->buffer, ".back") == 0){
             mode = NORMAL;
             return META_COMMAND_SUCCESS;
         }
@@ -209,7 +211,7 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
             print_tables();
             return META_COMMAND_SUCCESS;
         }
-        if(strcmp(inputBuffer->buffer, ".table") == 0){
+        if(strcmp(inputBuffer->buffer, ".create-table") == 0){
             switch (create_table())
             {
                 case (TABLE_OPERATION_SUCCESS):
@@ -218,9 +220,37 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
                     return META_COMMAND_FAILURE;
             }
         }
-        if(strcmp(inputBuffer->buffer, ".select") == 0){
-            select_table();
-        } else {
+        if(strcmp(inputBuffer->buffer, ".select-table") == 0){
+            switch (select_table())
+            {
+                case (TABLE_OPERATION_SUCCESS):
+                    return META_COMMAND_SUCCESS;
+                case (TABLE_OPERATION_FAILURE):
+                    return META_COMMAND_FAILURE;
+            }
+        }
+        if(strcmp(inputBuffer->buffer, ".index") == 0){
+            switch(create_index())
+            {
+                case (TABLE_OPERATION_SUCCESS):
+                    return META_COMMAND_SUCCESS;
+                case (TABLE_OPERATION_FAILURE):
+                    return META_COMMAND_FAILURE;
+            }
+        }
+        if(strcmp(inputBuffer->buffer, ".print-index") == 0){
+            switch(print_index())
+            {
+                case (TABLE_OPERATION_SUCCESS):
+                    return META_COMMAND_SUCCESS;
+                case (TABLE_OPERATION_FAILURE):
+                    return META_COMMAND_FAILURE;
+            }
+        }
+        //if(strcmp(inputBuffer->buffer, ".select") == 0){
+        //    select_table();
+        //} 
+        else {
             return META_COMMAND_UNRECOGNIZED_COMMAND;
         }
     }
@@ -326,23 +356,17 @@ void print_tables(){
 
 }
 
-void select_table(){
-    if(strlen(working_dir)<2 || strlen(database)<2){
-        printf("Select a working directory and a database first.\n");
+TableOperationResult create_index(){
+    if(strlen(working_dir)<2 || strlen(database)<2 || strlen(table)<2){
+        printf("Select a working directory,a database and a table first.\n");
     } else {
-
-        //insert file name
-        char table_name[32];
-        printf("Select from table with name: ");
-        fgets(table_name, 32, stdin);
-        strtok(table_name, "\n");
 
         //build path for file location
         char full_path[1024];
         strcpy(full_path, working_dir);
         strcat(full_path, database);
         strcat(full_path, "/");
-        strcat(full_path, table_name);
+        strcat(full_path, table);
         strcat(full_path, ".csv");
 
         //check if table exists
@@ -350,8 +374,6 @@ void select_table(){
             FILE *fp;
             fp=fopen(full_path, "r+");
 
-            // *************** WHERE *******************
-  
             //load first line, containing record structure
             char first_line[1024];
             fgets(first_line, 1024, fp);
@@ -408,9 +430,9 @@ void select_table(){
             fgets(index, 32, stdin);
             strtok(index, "\n");
             int index_number = atoi(index);
+            free(cursor);
 
             //create linked list of the table
-            int table_size;
             char record_line[1024];
             record *records_head = NULL;
             records_head = malloc(sizeof(record));
@@ -424,12 +446,15 @@ void select_table(){
                 record_cursor->next = malloc(sizeof(record));
                 record_cursor = record_cursor->next;
                 strcpy(record_line, "");
+            }
+
+            record_cursor = records_head;
+            int table_size = 0;
+            while(record_cursor->next!=NULL){
                 table_size++;
-            }          
-            
-            //init the cursors back at head
-            cursor = header;
-            record_cursor=records_head;
+                record_cursor=record_cursor->next;
+            }
+
 
             //now from records_head we have a sorted list by index
             int leaves_number = sort_records(records_head, index_number, table_size); 
@@ -452,22 +477,33 @@ void select_table(){
                 leaves_counter++;
                 record_cursor=record_cursor->next;
             }
-            
-            //build tree
-            bnode *tree_root;
-            tree_root = malloc(sizeof(bnode));
-            tree_root=build_tree(leaves, index_number, leaves_number);
 
-            //print tree
-            traversalPreorder(tree_root);
-                
+            //build tree
+            tree = malloc(sizeof(bnode));
+            tree=build_tree(leaves, index_number, leaves_number);
+
+            if(tree->value != NULL){
+                return TABLE_OPERATION_SUCCESS;
             } else {
-                printf("Do you want to create it? [y/n]\n");
-                char answer = getchar();
-                if(answer=='y'){ create_table(); select_table();}
+                free(tree);
+                return TABLE_OPERATION_FAILURE;
             }
 
+
+            //print tree
+            //traversalPreorder(tree_root);
         }
+        return TABLE_OPERATION_FAILURE;
+    }
+}
+
+TableOperationResult print_index(){
+    if(tree==NULL){
+        printf("Create an index first.\n");
+        return TABLE_OPERATION_FAILURE;
+    } else {
+        traversalPreorder(tree);
+    }
 }
 
 void traversalPreorder(bnode *node){
@@ -626,8 +662,8 @@ int sort_records(record *head, int index_number, int n_records){
     }
 
     free(record_cursor1);
-    //return uniques;
 
+    //return uniques;
     return arr_counter;
 }
 
@@ -690,6 +726,35 @@ void sort(column *head, int table_size){
 
 static int stringCompare(const void* str1, const void* str2){
     return strcmp(*(const char**)str1, *(const char**)str2); 
+}
+
+TableOperationResult select_table(){
+
+    if(strlen(working_dir)<2 || strlen(database)<2){
+        printf("Select a working directory and a database first.\n");
+        return TABLE_OPERATION_FAILURE;
+    } else {
+        char table_name[32];
+        printf("Select table with name: ");
+        fgets(table_name, 32, stdin);
+        strtok(table_name, "\n");
+
+        //build path for file location
+        char full_path[1024];
+        strcpy(full_path, working_dir);
+        strcat(full_path, database);
+        strcat(full_path, "/");
+        strcat(full_path, table_name);
+        strcat(full_path, ".csv");
+
+        //check if table already exists
+        if (stat(full_path, &st) == 0) {
+            strcpy(table, table_name);
+            printf("Table %s selected.\n", table_name);
+            return TABLE_OPERATION_FAILURE;
+        }
+    }
+        
 }
 
 TableOperationResult create_table() {
@@ -774,12 +839,12 @@ column* define_data_structure(){
     
         //acquire from stdin
         char field[32];
-        printf("Insert next column - (Insert '.exit' to end)\n");
+        printf("Insert next column - (Insert '.end' to end)\n");
         fgets(field, 32, stdin);
         strtok(field, "\n");
 
         //check if keyword exit is being pressed
-        if(strcmp(field, ".exit") == 0){
+        if(strcmp(field, ".end") == 0){
             printf("Columns defined.\n");
             //closes the list
             current=NULL;
@@ -798,6 +863,10 @@ column* define_data_structure(){
 
 int main() {
     print_startup_prompt();
+
+    //MOCK
+    strcpy(working_dir, "/home/eai/Documents/private/SSRI/Programmazione/progetti/mydb/");
+    strcpy(database, "gbdb-prova");
 
     InputBuffer* input_buffer = new_input_buffer();
     while(true){

@@ -23,9 +23,13 @@ typedef struct S_BNode {
 typedef enum { TABLE_OPERATION_SUCCESS, TABLE_OPERATION_FAILURE} TableOperationResult;
 
 void print_tables();
-void select_table();
 TableOperationResult create_table();
+TableOperationResult select_table();
+TableOperationResult create_index();
+TableOperationResult print_index();
 column* define_data_structure();
+
+
 
 void sort(column *head, int table_size);
 int sort_records(record *head, int index_number, int n_records);
