@@ -247,6 +247,15 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
                     return META_COMMAND_FAILURE;
             }
         }
+        if(strcmp(inputBuffer->buffer, ".insert") == 0){
+            switch(insert())
+            {
+                case (TABLE_OPERATION_SUCCESS):
+                    return META_COMMAND_SUCCESS;
+                case (TABLE_OPERATION_FAILURE):
+                    return META_COMMAND_FAILURE;
+            }
+        }
         //if(strcmp(inputBuffer->buffer, ".select") == 0){
         //    select_table();
         //} 
@@ -255,6 +264,107 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
         }
     }
     //*********************TABLE MODE********************* 
+}
+
+TableOperationResult insert(){
+    if(strlen(table)<2 || strlen(database)<2 || strlen(working_dir)<2){
+        printf("Make sure you've selected a table within your database");
+        return TABLE_OPERATION_FAILURE;
+    } else {
+        char path[1024];
+        strcpy(path, working_dir);
+        strcat(path, database);
+        strcat(path, "/");
+        strcat(path, table);
+        strcat(path, ".csv");
+
+        FILE *fp;
+        fp=fopen(path, "a+");
+        if(fp==NULL){
+            printf("Table not found\n");
+            return TABLE_OPERATION_FAILURE;
+        } else {
+            //read first line
+            char line[1024];
+            fgets(line, 1024, fp);
+
+            column *structure;
+            structure=malloc(sizeof(column));
+            column *structure_cursor;
+            structure_cursor=structure;
+
+            //scan line
+            char c;
+            char column[32];
+            int column_index = 0;
+            for(int i=0; i<strlen(line); i++){
+                c=line[i];
+
+                //build column string by dividing per separators and newlines
+                if (c != ',' && c!='\n'){
+                    column[column_index]=c;
+                    column_index++;
+                } else {
+                    //check if column isn't empty
+                    if(strlen(column)>0){       
+                        column[column_index]='\0';
+
+                        //add column to data structure
+                        strcpy(structure_cursor->field, column);
+                        structure_cursor->next = malloc(sizeof(column));
+                        structure_cursor = structure_cursor->next;
+                        
+                        //reset column
+                        column_index=0;
+                        strcpy(column, "");
+                    }
+                }
+            }
+
+            structure_cursor=structure;
+
+            char record[1024];
+            sprintf(record, "%d,", generate_id());
+            while (structure_cursor->next!=NULL) {
+                if(strcmp(structure_cursor->field, "id")!=0){
+                    char field[32];
+                    printf("Insert value for column %s: ", structure_cursor->field);
+                    fgets(field, 32, stdin);
+                    strtok(field, "\n");
+                    strcat(record, field);
+                    strcat(record, ",");
+                }
+                structure_cursor=structure_cursor->next;
+            }
+
+            record[strlen(record)] = '\0';
+            fprintf(fp, "\n");
+            fprintf(fp, record);
+            printf("Record inserted %s\n", record);
+        }
+        fclose(fp);
+        return TABLE_OPERATION_SUCCESS;
+    }
+}
+int generate_id(){
+    char path[1024];
+    strcpy(path, working_dir);
+    strcat(path, database);
+    strcat(path, "/");
+    strcat(path, table);
+    strcat(path, ".csv");
+
+    FILE *fp;
+    fp=fopen(path, "r");
+    char line[1024];
+    char last_id[32];
+
+    while(fgets(line, 1024, fp)){
+        strcpy(last_id, getFieldFromLine(line, 1));
+    }
+    fclose(fp);
+
+    return atoi(last_id)+1;
 }
 
 DirectorySelection define_working_dir(){
@@ -297,8 +407,7 @@ static void print_databases(){
         char command[256];
         strcpy(command, "cd ");
         strcat(command, working_dir);
-        strcat(command, "/");
-        strcat(command, " && ls | grep gbdb* | cut -c6-");
+        strcat(command, " && find . -type d | cut -c8-");
         printf("Databases in working directory %s :\n", working_dir);
         system(command);
     }
@@ -346,7 +455,6 @@ void print_tables(){
         char command[256];
         strcpy(command, "cd ");
         strcat(command, working_dir);
-        strcat(command, "/");
         strcat(command, database);
         strcat(command, "/");
         strcat(command, " && ls | rev | cut -c5- | rev");
@@ -488,10 +596,6 @@ TableOperationResult create_index(){
                 free(tree);
                 return TABLE_OPERATION_FAILURE;
             }
-
-
-            //print tree
-            //traversalPreorder(tree_root);
         }
         return TABLE_OPERATION_FAILURE;
     }
@@ -595,11 +699,8 @@ const char* findMedianValue(const char* val1, const char* val2){
     char (*p)[32];
     p=&field;
 
-    //printf("Finding median value between: %s and %s\n", val1, val2);
-
     field[0] = '\0';
     for(int i = 0; i<strlen(val1)-1; i++){
-        //printf("Letters found: %c, %c\n", val1[i], val2[i]);
         if(val1[i]==val2[i]){
             field[i]=val1[i];
         } else {
@@ -608,12 +709,10 @@ const char* findMedianValue(const char* val1, const char* val2){
         }
     }
 
-
     if(field[0] == '\0') {
         field[0] = (val1[0] + val2[0])/2;
         field[1] = '\0';
     }
-
         return *p;
 }
 
@@ -647,23 +746,14 @@ int sort_records(record *head, int index_number, int n_records){
         }
     }
 
-    //copy back and find uniques
     record_cursor1=head;
-    int uniques=0;
     for(int i = 0; i<arr_counter; i++){
-        if(i+1<arr_counter){
-            if(strcmp(getFieldFromLine(arr[i], index_number), getFieldFromLine(arr[i+1], index_number)) == 0) {
-                uniques++;
-            }
-        }
         strcpy(record_cursor1->line, arr[i]);
-
         record_cursor1=record_cursor1->next;
     }
 
     free(record_cursor1);
 
-    //return uniques;
     return arr_counter;
 }
 
@@ -865,7 +955,8 @@ int main() {
     print_startup_prompt();
 
     //MOCK
-    strcpy(working_dir, "/home/eai/Documents/private/SSRI/Programmazione/progetti/mydb/");
+    //strcpy(working_dir, "/home/eai/Documents/private/SSRI/Programmazione/progetti/mydb/");
+    strcpy(working_dir, "/home/gab/SSRI/Programmazione/progetti/mydb/");
     strcpy(database, "gbdb-prova");
 
     InputBuffer* input_buffer = new_input_buffer();

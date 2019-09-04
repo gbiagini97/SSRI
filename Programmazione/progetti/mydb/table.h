@@ -24,11 +24,12 @@ typedef enum { TABLE_OPERATION_SUCCESS, TABLE_OPERATION_FAILURE} TableOperationR
 
 void print_tables();
 TableOperationResult create_table();
+column* define_data_structure();
 TableOperationResult select_table();
 TableOperationResult create_index();
 TableOperationResult print_index();
-column* define_data_structure();
-
+TableOperationResult insert();
+int generate_id();
 
 
 void sort(column *head, int table_size);

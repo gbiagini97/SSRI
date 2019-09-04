@@ -13,8 +13,8 @@ const char* normalModeMetaCommands[] = {".help", ".exit", ".db-mode", ".table-mo
 const int normalCommands = 4;
 const char* dbModeMetaCommands[] = {".help", ".back", ".workingdir", ".dbs", ".db"};
 const int dbCommands = 5;
-const char* tableModeMetaCommands[] = {".help", ".back", ".tables", ".create-table", ".select-table", ".index", ".print-index", ".query"};
-const int tableCommands = 8;
+const char* tableModeMetaCommands[] = {".help", ".back", ".tables", ".create-table", ".select-table", ".index", ".print-index", ".insert", ".query"};
+const int tableCommands = 9;
 
 const char* getModeName(Mode mode);
 const char* getModeInputPrompt(Mode mode);
