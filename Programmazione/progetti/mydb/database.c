@@ -61,24 +61,30 @@ const char* getModeInputPrompt(Mode mode)
       case TABLE: return "table-mode >";
    }
 }
-const char* getModeMetaCommands(Mode mode) 
+const char** getModeMetaCommands(Mode mode) 
 {
    switch (mode) 
    {
-      case NORMAL: return *normalModeMetaCommands;
-      case DB: return *dbModeMetaCommands;
-      case TABLE: return *tableModeMetaCommands;
+      case NORMAL: return normalModeMetaCommands;
+      case DB: return dbModeMetaCommands;
+      case TABLE: return tableModeMetaCommands;
    }
+}
+
+const int getNumberOfCommands(Mode mode){
+    switch (mode)
+    {
+    case NORMAL: return normalCommands;
+      case DB: return dbCommands;
+      case TABLE: return tableCommands;
+    }
 }
 
 
 static void print_metacommands(){
-
-    size_t size = sizeof(getModeMetaCommands(mode))/sizeof(getModeMetaCommands(mode)[0]);
-    for(int i=0; i<size; i++){
+    for(int i=0; i<getNumberOfCommands(mode); i++){
         printf("%s\n", getModeMetaCommands(mode)[i]);
     }
-    
 }
 
 static void print_prompt(){ printf("%s ", getModeInputPrompt(mode)); }
@@ -158,6 +164,10 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
             case (DIRECTORY_SELECTION_FAILURE):
                 return META_COMMAND_FAILURE;
             }
+        }
+        if(strcmp(inputBuffer->buffer, ".dbs") == 0){
+            print_databases();
+            return META_COMMAND_SUCCESS;
         }
         if(strcmp(inputBuffer->buffer, ".db") == 0){
             switch (select_database())
@@ -246,6 +256,20 @@ DirectorySelection define_working_dir(){
     }
 }
 
+static void print_databases(){
+    if(strlen(working_dir)<2){
+        printf("Select a working directory first.\n");
+    } else {
+        char command[256];
+        strcpy(command, "cd ");
+        strcat(command, working_dir);
+        strcat(command, "/");
+        strcat(command, " && ls | grep gbdb* | cut -c6-");
+        printf("Databases in working directory %s :\n", working_dir);
+        system(command);
+    }
+}
+
 DatabaseSelection select_database(){
     if(strlen(working_dir)<2){
         printf("Select a working directory first.\n");
@@ -253,7 +277,7 @@ DatabaseSelection select_database(){
     } else {
         char database_name[250];
         char full_path[256];
-        printf("Insert your database name: ");
+        printf("Insert database name: ");
         fgets(database_name, 250, stdin);
         strcpy(database, "");
         strcat(database, prefix);

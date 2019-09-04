@@ -6,3 +6,5 @@ DirectorySelection define_working_dir();
 
 DatabaseSelection select_database();
 
+static void print_databases();
+
