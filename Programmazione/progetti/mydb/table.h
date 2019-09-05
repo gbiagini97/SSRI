@@ -22,22 +22,28 @@ typedef struct S_BNode {
 
 typedef enum { TABLE_OPERATION_SUCCESS, TABLE_OPERATION_FAILURE} TableOperationResult;
 
-void print_tables();
+TableOperationResult print_tables();
 TableOperationResult create_table();
-column* define_data_structure();
 TableOperationResult select_table();
 TableOperationResult create_index();
 TableOperationResult print_index();
+TableOperationResult find();
 TableOperationResult insert();
+
+
+column* define_data_structure();
+column* get_table_structure(FILE *file);
+void build_tree_from_list(record *list, int index_number);
 int generate_id();
-
-
-void sort(column *head, int table_size);
+int print_table_structure(FILE *fp);
+int count_records(record *head);
+record* build_list_from_table(FILE *fp);
+FILE* open_table(char open_mode[3]);
 int sort_records(record *head, int index_number, int n_records);
-static int stringCompare(const void* str1, const void* str2);
-
+void build_leaves(bnode *leaves[], record *sorted_list, int leaves_number);
+void traversal_preorder_search(bnode *node, char key[32], int index_number);
 
 bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);
-const char* getFieldFromLine(char *line, int index_number);
-const char* findMedianValue(const char* val1, const char* val2);
-void traversalPreorder(bnode *node);
+const char* get_field_from_line(char *line, int index_number);
+const char* find_median_value(const char* val1, const char* val2);
+void print_traversal_preorder(bnode *node);

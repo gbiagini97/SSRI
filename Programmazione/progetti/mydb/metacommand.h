@@ -11,15 +11,15 @@ typedef enum {NORMAL, DB, TABLE} Mode;
 
 const char* normalModeMetaCommands[] = {".help", ".exit", ".db-mode", ".table-mode"};
 const int normalCommands = 4;
-const char* dbModeMetaCommands[] = {".help", ".back", ".workingdir", ".dbs", ".db"};
+const char* dbModeMetaCommands[] = {".help", ".back", ".select-workingdir", ".list", ".select-db"};
 const int dbCommands = 5;
-const char* tableModeMetaCommands[] = {".help", ".back", ".tables", ".create-table", ".select-table", ".index", ".print-index", ".insert", ".query"};
+const char* tableModeMetaCommands[] = {".help", ".back", ".list", ".create", ".select", ".create-index", ".print-index", ".find" ,".insert"};
 const int tableCommands = 9;
 
-const char* getModeName(Mode mode);
-const char* getModeInputPrompt(Mode mode);
-const char** getModeMetaCommands(Mode mode);
-const int getNumberOfCommands(Mode mode);
+const char* get_mode_name(Mode mode);
+const char* get_mode_input_prompt(Mode mode);
+const char** get_mode_meta_commands(Mode mode);
+const int get_number_of_commands(Mode mode);
 
 static void print_metacommands();
 
