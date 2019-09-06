@@ -53,57 +53,61 @@ const char* get_mode_name(Mode mode)
       case NORMAL: return "NORMAL";
       case DB: return "DB";
       case TABLE: return "TABLE";
+      default: return "NORMAL";
    }
 }
 const char* get_mode_input_prompt(Mode mode) 
 {
    switch (mode) 
    {
-      case NORMAL: return "gbdb >";
-      case DB: {
-          if(strlen(database)>2){
-              char db_prompt[36];
-              char (*p)[36] = malloc(sizeof(db_prompt));
-              strcpy(db_prompt, "db-");
-              strcat(db_prompt ,database);
-              strcat(db_prompt, " >");
-              p=&db_prompt;
-              return *p;
-          } else {
-          return "db-mode >";
-          }
-      }
-      case TABLE: {
-          if(strlen(table)>2){
-              char table_prompt[36];
-              char (*p)[36] = malloc(sizeof(table_prompt));
-              strcpy(table_prompt, "table-");
-              strcat(table_prompt, table);
-              strcat(table_prompt, " >");
-              p=&table_prompt;
-              return *p;
-          } else {
-            return "table-mode >";
-          }
-      }
+        case NORMAL: return "gbdb >";
+        case DB: {
+            if(strlen(database)>2){
+                char db_prompt[36];
+                char (*p)[36] = malloc(sizeof(db_prompt));
+                strcpy(db_prompt, "db-");
+                strcat(db_prompt ,database);
+                strcat(db_prompt, " >");
+                p=&db_prompt;
+                return *p;
+            } else {
+            return "db-mode >";
+            }
+        }
+        case TABLE: {
+            if(strlen(table)>2){
+                char table_prompt[36];
+                char (*p)[36] = malloc(sizeof(table_prompt));
+                strcpy(table_prompt, "table-");
+                strcat(table_prompt, table);
+                strcat(table_prompt, " >");
+                p=&table_prompt;
+                return *p;
+            } else {
+                return "table-mode >";
+            }
+        }
+        default: return "gbdb >";
    }
 }
 const char** get_mode_meta_commands(Mode mode) 
 {
    switch (mode) 
    {
-      case NORMAL: return normalModeMetaCommands;
-      case DB: return dbModeMetaCommands;
-      case TABLE: return tableModeMetaCommands;
+        case NORMAL: return normalModeMetaCommands;
+        case DB: return dbModeMetaCommands;
+        case TABLE: return tableModeMetaCommands;
+        default: return normalModeMetaCommands;
    }
 }
 
 const int get_number_of_commands(Mode mode){
     switch (mode)
     {
-    case NORMAL: return normalCommands;
-      case DB: return dbCommands;
-      case TABLE: return tableCommands;
+        case NORMAL: return normalCommands;
+        case DB: return dbCommands;
+        case TABLE: return tableCommands;
+        default: return normalCommands;
     }
 }
 
@@ -303,6 +307,7 @@ MetaCommandResult execute_metacommand(InputBuffer* inputBuffer){
         }
     }
     //*********************TABLE MODE********************* 
+    return META_COMMAND_FAILURE;
 }
 
 TableOperationResult find(){
@@ -771,7 +776,15 @@ TableOperationResult create_index(){
 
 void build_tree_from_list(record *list, int index_number){
     int leaves_number = sort_records(list, index_number, count_records(list)); 
-        
+
+    //merge_sort(&list, index_number);
+
+    //int leaves_number = 0;
+    //while(list->next!=NULL){
+    //    list=list->next;
+    //    index_number++;
+    //}
+
     bnode *leaves[leaves_number];
     build_leaves(leaves, list, leaves_number);
 
@@ -884,9 +897,7 @@ bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
         } else {
             return NULL;
         }
-
     }
-    
 }
 
 const char* find_median_value(const char* val1, const char* val2){
@@ -911,24 +922,24 @@ const char* find_median_value(const char* val1, const char* val2){
         return *p;
 }
 
-
 int sort_records(record *head, int index_number, int n_records){
-    char *arr[n_records];
+    //char *arr[n_records];
+    char arr[n_records][1024];
     int arr_counter = 0;
 
     record *record_cursor1;
     record_cursor1=head;
     
-    record_cursor1 = head;
     while(record_cursor1->next!=NULL) {
-        arr[arr_counter] = strdup(record_cursor1->line);
+        //arr[arr_counter] = strdup(record_cursor1->line);
+        strcpy(arr[arr_counter], record_cursor1->line);
         record_cursor1 = record_cursor1->next;
         arr_counter++;
     }
 
-    char field1[32];
-    char field2[32];
-    char temp[32];
+    char field1[1024];
+    char field2[1024];
+    char temp[1024];
     for(int i = 0; i<arr_counter-1; ++i){
         for(int k = i+1; k<arr_counter; ++k) {
             strcpy(field1, get_field_from_line(arr[i], index_number));
@@ -950,11 +961,74 @@ int sort_records(record *head, int index_number, int n_records){
     return arr_counter;
 }
 
+void merge_sort(record** headRef, int index_number){
+    record* head = *headRef; 
+    record* a; 
+    record* b; 
+  
+    /* Base case -- length 0 or 1 */
+    if ((head == NULL) || (head->next == NULL)) { 
+        return; 
+    } 
+    /* Split head into 'a' and 'b' sublists */
+    front_back_split(head, &a, &b); 
+  
+    /* Recursively sort the sublists */
+    merge_sort(&a, index_number); 
+    merge_sort(&b, index_number); 
+  
+    /* answer = merge the two sorted lists together */
+    *headRef = sorted_merge(a, b, index_number); 
+}
+
+record* sorted_merge(record* a, record* b, int index_number){ 
+    record* result = NULL; 
+  
+    /* Base cases */
+    if (a == NULL) 
+        return (b); 
+    else if (b == NULL) 
+        return (a); 
+  
+    /* Pick either a or b, and recur */
+    if (strcmp(get_field_from_line(a->line, index_number), get_field_from_line(b->line, index_number))>0) { 
+        result = a; 
+        result->next = sorted_merge(a->next, b, index_number); 
+    } 
+    else { 
+        result = b; 
+        result->next = sorted_merge(a, b->next, index_number); 
+    } 
+    return (result); 
+}
+
+void front_back_split(record* source, record** frontRef, record** backRef) { 
+    record* fast; 
+    record* slow; 
+    slow = source; 
+    fast = source->next; 
+  
+    /* Advance 'fast' two nodes, and advance 'slow' one node */
+    while (fast != NULL) { 
+        fast = fast->next; 
+        if (fast != NULL) { 
+            slow = slow->next; 
+            fast = fast->next; 
+        } 
+    } 
+  
+    /* 'slow' is before the midpoint in the list, so split it in two 
+    at that point. */
+    *frontRef = source; 
+    *backRef = slow->next; 
+    slow->next = NULL; 
+} 
+
 const char* get_field_from_line(char *line, int index_number){
     int index_counter = 0;
     char c;
-    char field[32];
-    char (*p)[32] = malloc(sizeof(field));
+    char field[1024];
+    char (*p)[1024] = malloc(sizeof(field));
     int field_index = 0;
 
     if(index_number != -1) {
@@ -1008,10 +1082,9 @@ TableOperationResult select_table(){
         if (stat(full_path, &st) == 0) {
             strcpy(table, table_name);
             printf("Table %s selected.\n", table_name);
-            return TABLE_OPERATION_FAILURE;
+            return TABLE_OPERATION_SUCCESS;
         }
     }
-        
 }
 
 TableOperationResult create_table() {
@@ -1125,7 +1198,7 @@ int main() {
     //strcpy(working_dir, "/home/eai/Documents/private/SSRI/Programmazione/progetti/mydb/");
     strcpy(working_dir, "/home/gab/SSRI/Programmazione/progetti/mydb/");
     strcpy(database, "gbdb-prova");
-    strcpy(table, "auto");
+    strcpy(table, "small_dataset");
     mode = TABLE;
 
     InputBuffer* input_buffer = new_input_buffer();
@@ -1144,6 +1217,9 @@ int main() {
                 continue;
             case (META_COMMAND_UNRECOGNIZED_COMMAND):
                 printf("Unrecognized metacommand '%s'\n", input_buffer->buffer);
+                continue;
+            case (META_COMMAND_FAILURE):
+                printf("An error occurred while executing metacommand '%s'\n", input_buffer->buffer);
                 continue;
             }
         } else {
