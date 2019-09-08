@@ -64,13 +64,7 @@ Select the table you want to use, the prompt in Table Mode will change according
 
 #### .create-index
 The data structure of the selected table gets print out and you need to specify on which column you desire to create the index. The `TableOperationResult create_index();` function will then make a subcall to the `record* build_list_from_table(FILE *fp);` which will create a linked list of all the records within the selected table.
-After that the `void build_tree_from_list(record *list, int index_number);` wrapper will create a tree from the linked list and the column you've chosen by making many operations:
-* **The list gets sorted** by the chosen column with the `int sort_records(record *head, int index_number, int n_records);` function with the bubble sort algorithm. 
-* For each element of the list the `void build_leaves(bnode *leaves[], record *sorted_list, int leaves_number);` will **create a node structure** which represents the atomic element of the tree. As the function name suggests, these fresh node structures are the leaves of the tree that will be created.
-
-![bnode](resources/bnode.png) The node diagram.
-
-*  Finally **the tree is created** by the recursive `bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);` function. (NOTE: the tree gets built from the bottom to the top, finding median values between each node. The three depth is log2(n) with n being the number of records in the table);
+After that the `void build_tree_from_list(record *list, int index_number);` wrapper will create a tree from the linked list and the column you've chosen by initializing the `static bnode *tree;` variable.
 
 #### .print-index
 If you want to print the tree there are thwo handy recursive functions:
@@ -88,3 +82,68 @@ Everytime a new query is launched a calculation of the time needed to retrieve t
 
 #### .insert
 I had to create an insert function in order to make this program eligible for the database status. One by one, each column of the table will be printed out and you are going to insert the value related to that field.
+
+## Development view
+
+### Function returns
+Each header file contains the prototypes of the functions that are implemented in [database.c](src/database.c) file. In particular, almost every metacommand function is a wrapper around the functions where the logic actually happens. Each mode has it's own enums that describe the outcome of the functions that the metacommand invoked, those are:
+* `DirectorySelection`;
+* `DatabaseSelection`;
+* `TableOperationResult`.
+
+A value of an enum is returned after a metacommand function wrapper is called, and the switch around those returned values in the function `MetaCommandResult execute_metacommand(InputBuffer* inputBuffer);` returns back a value from the `MetaCommandResult` enum.
+
+This implementation allows a more linear debugging process. 
+
+### Structures
+
+The InputBuffer structure defined in [buffer.h](src/buffer.h) and included in [metacommand.h](src/metacommand.h) is the entity that reads from `stdin` and when invoking metacommands.
+```
+typedef struct {
+    char *buffer;
+    size_t buffer_length;
+    ssize_t input_length;
+} InputBuffer;
+```
+
+The next 3 structures are all defined in [table.h](src/table.h).
+
+The S_Column structure is used to get each column name or value in a record or table header.
+```
+typedef struct S_Column{
+    char field[32];
+    struct S_Column *next;
+} column;
+```
+
+The S_Record structure is used to keep records in a list form for further elaborations or for priting to console.
+```
+typedef struct S_Record {
+    char line[1024];
+    struct S_Record *next;
+} record;
+```
+
+The S_BNode structure is the atomic part of the tree that gets created from the list S_Record. I guess it is the simplest possible implementation for a node of a tree. 
+```
+typedef struct S_BNode {
+    char value[1024];
+    struct S_BNode *left;
+    struct S_BNode *right;
+} bnode;
+```
+
+### Tree
+Let's examine how the tree gets generated after the metacommand `.create-index` is invoked.
+
+Once the csv file has been parsed and the linked list of the table has been initialized, **the list gets sorted** by the chosen column with the `int sort_records(record *head, int index_number, int n_records);` function with the bubble sort algorithm. 
+
+For each element of the list the `void build_leaves(bnode *leaves[], record *sorted_list, int leaves_number);` will **create a node structure** which represents the atomic element of the tree. As the function name suggests, these fresh node structures are the leaves of the tree that will be created.
+
+As you might have guessed the tree gets built from the bottom to the top. Having a sorted list by the chosen column, and then "converting" it to an array of `struct S_BNode` it's possible to **find medians** between each 2 nodes.
+
+This process is done recursively by the `bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);` function, which at every iteration cuts in half the parameter `int nodes_number`. In the last iteration the funtion will return a pointer to a `struct S_BNode` that is the root of the tree.
+
+The tree depth is log2(n) with n being the number of records in the table.
+
+If the user invokes the `.create-index` metacommand again, the previous tree will be free'd recursively by the `void free_tree(bnode *node)` function, and a new one will be allocated.
