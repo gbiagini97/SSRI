@@ -147,3 +147,8 @@ This process is done recursively by the `bnode* build_tree(bnode *leaves[], int 
 The tree depth is log2(n) with n being the number of records in the table.
 
 If the user invokes the `.create-index` metacommand again, the previous tree will be free'd recursively by the `void free_tree(bnode *node)` function, and a new one will be allocated.
+
+
+## Installation
+This program has been developed under GNU/Linux and with GNU/Linux in mind, so it won't work on Windows.
+The package comes with the [compile.sh](compile.sh) script that will compile the program and move the executable into the root folder of the package.
