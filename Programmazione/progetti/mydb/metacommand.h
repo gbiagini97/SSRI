@@ -19,7 +19,7 @@ const int tableCommands = 9;
 const char* get_mode_name(Mode mode);
 const char* get_mode_input_prompt(Mode mode);
 const char** get_mode_meta_commands(Mode mode);
-const int get_number_of_commands(Mode mode);
+int get_number_of_commands(Mode mode);
 
 static void print_metacommands();
 

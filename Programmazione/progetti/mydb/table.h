@@ -47,7 +47,6 @@ bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);
 const char* get_field_from_line(char *line, int index_number);
 const char* find_median_value(const char* val1, const char* val2);
 void print_traversal_preorder(bnode *node);
+void print_2d_traversal_preorder(bnode *node, int space);
 
-void merge_sort(record** headRef, int index_number);
-record* sorted_merge(record* a, record* b, int index_number);
-void front_back_split(record* source, record** frontRef, record** backRef);
+void free_tree(bnode *node);
