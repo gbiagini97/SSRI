@@ -1233,7 +1233,7 @@ int main() {
                 continue;
             }
         } else {
-            printf("BUFFER: %s\n", input_buffer->buffer);
+            printf("Unrecognized metacommand: %s\n", input_buffer->buffer);
         }
     }
 
