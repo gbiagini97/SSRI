@@ -918,13 +918,8 @@ bnode* build_tree(bnode *leaves[], int index_number, int nodes_number){
 
         head->left=leaves[leaf_indicator];
         head->right=leaves[leaf_indicator+1];
-
-        //if(strlen(head->value)>=1  || (int)atoi(head->value) != 0){
-            return head;
-        //} else {
-        //    printf("An error occurred while creating the index.\n");
-        //    return NULL;
-        //}
+        return head;
+   
     }
 }
 
@@ -1026,7 +1021,7 @@ const char* get_field_from_line(char *line, int index_number){
         p=&id;
         return *p;
     }
-    else{
+    else {
         char c = '\0';
         char field[32];
         field[0]='\0';
@@ -1064,52 +1059,6 @@ const char* get_field_from_line(char *line, int index_number){
         }
 
     }
-
-
-
-
-
-
-
-
-    //if(line == NULL){
-    //    return "\0";
-    //} else {
-//
-    //    int index_counter = 0;
-    //    char c;
-    //    char field[1024];
-    //    char (*p)[1024] = malloc(sizeof(field));
-    //    int field_index = 0;
-//
-    //    if(index_number != -1) {
-    //        for(int i=0; i<(int)strlen(line); i++){
-    //            c=line[i];
-//
-    //            //build field string by dividing per separators and newlines
-    //            if (c != ',' && c!='\n'){
-    //                field[field_index]=c;
-    //                field_index++;
-    //            } else {      
-    //                field[field_index]='\0';
-    //                index_counter++;
-//
-    //                if(index_counter==index_number){
-    //                    p=&field;
-    //                    break;
-    //                } else {
-    //                    field_index=0;
-    //                    strcpy(field, "");
-    //                }
-    //            }
-    //        }
-    //        if(strlen(field)<2){ return get_field_from_line(line, -1);} 
-    //        else {return *p;}
-    //    } else {
-    //        strcat(line, "\0");
-    //        return line;
-    //    }
-    //}
 }
 
 TableOperationResult select_table(){
