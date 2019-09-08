@@ -152,3 +152,4 @@ If the user invokes the `.create-index` metacommand again, the previous tree wil
 ## Installation
 This program has been developed under GNU/Linux and with GNU/Linux in mind, so it won't work on Windows.
 The package comes with the [compile.sh](compile.sh) script that will compile the program and move the executable into the root folder of the package.
+The [gbdb-test](gbdb-test) folder contains some csv format files to start playting around with the program.
