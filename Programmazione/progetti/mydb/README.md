@@ -30,12 +30,12 @@ In DB Mode and Table Mode you can use metacommands to execute operations as desc
 
 #### .help (in Normal, DB and Table Mode)
 Every Mode has a dedicated version of `.help` metacommand, so you can get specific info about how to play around by printing a brief description of the Mode and listing avaible metacommands via `static void print_metacommands();` function.
-Metacommands in each Mode are listed in [metacommand.h](metacommand.h).
+Metacommands in each Mode are listed in [metacommand.h](src/metacommand.h).
 
-Each list is extensible by writing the implementation of new metacommands in `MetaCommandResult execute_metacommand(InputBuffer* inputBuffer);` in [database.c](database.c) file.
+Each list is extensible by writing the implementation of new metacommands in `MetaCommandResult execute_metacommand(InputBuffer* inputBuffer);` in [database.c](src/database.c) file.
 
 #### .db-mode and .table-mode 
-This two metacommands are self-explanatory, they make the program switch to other modes by modifying the Mode enum in [metacommand.h](metacommand.h).
+This two metacommands are self-explanatory, they make the program switch to other modes by modifying the Mode enum in [metacommand.h](src/metacommand.h).
 
 #### .exit 
 Close the program, nothing special.
@@ -57,7 +57,7 @@ Print out all tables in your selected database.
 Go back to Normal Mode.
 
 #### .create
-Create a new Table with the `TableOperationResult create_table();` function from [table.h](table.h). A new csv format file is created and you get asked to define the data structure of the table (otherwise what's the point of a table?).
+Create a new Table with the `TableOperationResult create_table();` function from [table.h](src/table.h). A new csv format file is created and you get asked to define the data structure of the table (otherwise what's the point of a table?).
 
 #### .select
 Select the table you want to use, the prompt in Table Mode will change accordingly.
