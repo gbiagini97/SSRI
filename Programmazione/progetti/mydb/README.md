@@ -3,7 +3,7 @@
 ## Introduction
 
 ### Purposes
-I usually work with many types of databases: SQL, noSQL and even graph ones. One day I've started studying how [SQLlite](https://sqlite.org/index.html) works in order to have a better general understanding of these softwares thanks to it's fantastic documentation. I was hit so hard by the hype train that I wanted to realize a clone of it. Things went differently from making an actual clone of it, but still it was a great experience getting into this. If I ever go professional with C programming I will definitely catch up with what I've done so far in this repo and continue the development.
+I've worked with many types of databases: SQL, noSQL and even graph ones. One day I've started studying how [SQLlite](https://sqlite.org/index.html) works in order to have a better general understanding of these softwares thanks to it's fantastic documentation. I was hit so hard by the hype train that I wanted to realize a clone of it. Things went differently from making an actual clone of it, but still it was a great experience getting into this. If I ever go professional with C programming I will definitely catch up with what I've done so far in this repo and continue the development.
 
 So far what I can say is that I made this project in order to have a better understanding on how databases work and because I needed to do a project for an exam.
 
