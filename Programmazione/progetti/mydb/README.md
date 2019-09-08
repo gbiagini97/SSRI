@@ -140,7 +140,7 @@ Once the csv file has been parsed and the linked list of the table has been init
 
 For each element of the list the `void build_leaves(bnode *leaves[], record *sorted_list, int leaves_number);` will **create a node structure** which represents the atomic element of the tree. As the function name suggests, these fresh node structures are the leaves of the tree that will be created.
 
-As you might have guessed the tree gets built from the bottom to the top. Having a sorted list by the chosen column, and then "converting" it to an array of `struct S_BNode` it's possible to **find medians** between each 2 nodes.
+As you might have guessed the tree gets built from the bottom to the top. Having a sorted list by the chosen column, and then "converting" it to an array of `struct S_BNode` it's possible to **find medians** between every node.
 
 This process is done recursively by the `bnode* build_tree(bnode *leaves[], int index_number, int nodes_number);` function, which at every iteration cuts in half the parameter `int nodes_number`. In the last iteration the funtion will return a pointer to a `struct S_BNode` that is the root of the tree.
 
