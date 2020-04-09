@@ -25,9 +25,10 @@ Policy:
 ## Mechanism
 The project has three main components entirely developed from scratch:
 * Identity Access Manager: 
+  * Stores encrypted credentials and users roles;
   * Performs a Role Based Authentication;
   * Administrators can register new users;
-  * Provides an Access Token to authenticated users to interact with the services;
+  * Provides an Access Token to authenticated users in order to interact with services;
 * Gateway: 
   * Is the main entrypoint that handles incoming requests for services;
   * Verifies the validity of the Access Token and extracts the claims from it;
