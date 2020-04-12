@@ -1,3 +1,5 @@
+package it.gbiagini.swm.iam.test;
+
 import it.gbiagini.swm.iam.IamApplication;
 import it.gbiagini.swm.iam.domain.Credentials;
 import it.gbiagini.swm.iam.domain.CredentialsRepository;

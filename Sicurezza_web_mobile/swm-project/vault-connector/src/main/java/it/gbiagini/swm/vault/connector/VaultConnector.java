@@ -1,9 +1,10 @@
-package it.gbiagini.swm.iam.vault;
+package it.gbiagini.swm.vault.connector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.vault.authentication.AppRoleAuthentication;
+import org.springframework.vault.authentication.AppRoleAuthenticationOptions;
 import org.springframework.vault.authentication.ClientAuthentication;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultClients;
@@ -16,7 +17,7 @@ import static org.springframework.vault.authentication.AppRoleAuthenticationOpti
 
 @Configuration
 @EnableConfigurationProperties(VaultProperties.class)
-public class VaultConfig extends AbstractVaultConfiguration {
+public class VaultConnector extends AbstractVaultConfiguration {
 
     @Autowired
     private VaultProperties properties;
@@ -30,7 +31,7 @@ public class VaultConfig extends AbstractVaultConfiguration {
 
     @Override
     public ClientAuthentication clientAuthentication() {
-        AppRoleAuthenticationOptionsBuilder builder = builder()
+        AppRoleAuthenticationOptionsBuilder builder = AppRoleAuthenticationOptions.builder()
                 .roleId(RoleId.provided(properties.getRoleId()))
                 .secretId(SecretId.provided(properties.getSecretId()))
                 .path("approle");
@@ -43,6 +44,5 @@ public class VaultConfig extends AbstractVaultConfiguration {
 
         return new TokenAuthentication(vaultToken);
     }
-
 
 }

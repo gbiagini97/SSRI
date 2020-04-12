@@ -1,4 +1,4 @@
-package it.gbiagini.swm.cryptolib;
+package it.gbiagini.swm.crypto;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CryptoLib {
-
-    public CryptoLib() {}
 
     public static Map<String, String> hash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();

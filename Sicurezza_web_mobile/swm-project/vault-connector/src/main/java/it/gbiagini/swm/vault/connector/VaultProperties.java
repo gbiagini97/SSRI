@@ -1,4 +1,4 @@
-package it.gbiagini.swm.iam.vault;
+package it.gbiagini.swm.vault.connector;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

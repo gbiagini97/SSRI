@@ -1,6 +1,6 @@
 package it.gbiagini.swm.iam.service;
 
-import it.gbiagini.swm.cryptolib.CryptoLib;
+import it.gbiagini.swm.crypto.CryptoLib;
 import it.gbiagini.swm.iam.domain.Credentials;
 import it.gbiagini.swm.iam.domain.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;

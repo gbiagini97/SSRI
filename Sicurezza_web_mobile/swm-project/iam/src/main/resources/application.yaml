@@ -5,3 +5,8 @@ vault:
   scheme: http
   role-id: ${ROLE_ID}
   secret-id: ${SECRET_ID}
+
+server:
+  port: 18180
+  servlet:
+    contextPath: /iam

@@ -68,11 +68,6 @@ path "auth/approle/login" {
   capabilities = ["create", "read"]
 }
 
-path "database/config/credentials-database"
-{
-  capabilities = ["read"]
-}
-
 path "secret/data/credentials-database"
 {
   capabilities = ["read"]
