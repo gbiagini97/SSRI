@@ -27,7 +27,7 @@ public class CryptoLib {
 
     private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-        byte[] salt = new byte[16];
+        byte[] salt = new byte[64];
         sr.nextBytes(salt);
         return salt;
     }
