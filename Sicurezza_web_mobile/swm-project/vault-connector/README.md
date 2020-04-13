@@ -84,7 +84,7 @@ path "secret/data/credentials-database"
 
 * The first entry of the policy allows a service to:
   * Login via the `create` capability;
-  * Retrieve useful information about the token acquired via the APP-Role authentication. The ability to access the endpoint is necessary to make the service aware about the token expiration time so that it can perform a leasing renewal by logging in again.
+  * Retrieve useful information about the token acquired via the APP-Role authentication. The `read` capability is necessary to make the service aware about the token expiration time so that it can perform a leasing renewal by logging in again.
 * The second entry of the policy is the actual secret location, that the service needs to read.
 
 Then submit the policy to the Vault server via:
