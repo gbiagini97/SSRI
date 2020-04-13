@@ -7,7 +7,7 @@ The library provides a simple interface to retrieve secrets from a Vault instanc
 
 ### Setting up Vault
 Launch a Docker instance via the command:
-```shell script
+```sh
 docker run --cap-add=IPC_LOCK -p 8200:8200 -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 'VAULT_ADDR=http://0.0.0.0:8200' -d --name=vault vault
 ``` 
 
@@ -15,7 +15,7 @@ docker run --cap-add=IPC_LOCK -p 8200:8200 -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 
 * `VAULT_ADDR=http://0.0.0.0:8200` sets an environment variable in the container specifying the protocol, endpoint and Vault port.
 
 The container will log something like this:
-```log
+```
 
 ==> Vault server configuration:
              Api Address: http://0.0.0.0:8200
@@ -50,7 +50,7 @@ Development mode should NOT be used in production installations!
 In particular the `Unseal Key` and the `Root Token` must be kept in a secure place and not exposed to prevent malicious activities on the Vault instance.
 
 We proceed by logging in via the CLI:
-```shell script
+```sh
 vault login
 ```
 It will be asked to insert a Token as it is the main authentication mechanism on Vault. By inserting the previously acquired `Root Token` we will be authenticated as root.
@@ -59,7 +59,7 @@ It will be asked to insert a Token as it is the main authentication mechanism on
 Vault-Connector uses the APP-Role authentication mechanism provided by Vault which is meant to be used for service-to-Vault interactions.
 
 Let's enable the dedicated authorization mechanism via:
-```shell script
+```sh
 vault auth enable approle
 ```
 
@@ -88,7 +88,7 @@ path "secret/data/credentials-database"
 * The second entry of the policy is the actual secret location, that the service needs to read.
 
 Then submit the policy to the Vault server via:
-```shell script
+```sh
 vault policy write iam_policy iam_policy.hcl
 ```
 ### Role registration
@@ -102,14 +102,14 @@ The `role_id` and the `secret_id` will be used for the login.
 
 ### Inserting the secret
 We will be using the Vault-Connector for many secret retrievals, so let's begin by inserting our first secret representing the connection parameters of a MySQL database:
-```shell script
+```sh
 vault kv put secret/credentials-database url=127.0.0.1:3306 username=iam password=iam schema=credentials
 ```
 
 ## Using the Vault-Connector
 The library is not intended to be used as a standalone application but to be part of a service that needs to interact with Vault in order to retrieve secrets.
 
-For instance let's the `iam` service will need MySQL connection parameters to successfully startup.
+For instance the `iam` service will need MySQL connection parameters to successfully startup.
 
 ### Perform the service authentication
 The `iam` service needs the APP-Role credentials in order to perform the authentication with Vault, otherwise an exception will be thrown.
