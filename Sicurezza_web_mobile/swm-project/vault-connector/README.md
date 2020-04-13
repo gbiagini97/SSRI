@@ -47,10 +47,10 @@ Development mode should NOT be used in production installations!
 ==> Vault server started! Log data will stream in below:
 ```
 
-In particolar the `Unseal Key` and the `Root Token` must be kept in a secure place and not exposed to prevent malicious activities on the Vault instance.
+In particular the `Unseal Key` and the `Root Token` must be kept in a secure place and not exposed to prevent malicious activities on the Vault instance.
 
 We proceed by logging in via the CLI:
-```shell
+```shell script
 vault login
 ```
 It will be asked to insert a Token as it is the main authentication mechanism on Vault. By inserting the previously acquired `Root Token` we will be authenticated as root.
@@ -59,7 +59,7 @@ It will be asked to insert a Token as it is the main authentication mechanism on
 Vault-Connector uses the APP-Role authentication mechanism provided by Vault which is meant to be used for service-to-Vault interactions.
 
 Let's enable the dedicated authorization mechanism via:
-```shell
+```shell script
 vault auth enable approle
 ```
 
@@ -88,12 +88,12 @@ path "secret/data/credentials-database"
 * The second entry of the policy is the actual secret location, that the service needs to read.
 
 Then submit the policy to the Vault server via:
-```shell
+```shell script
 vault policy write iam_policy iam_policy.hcl
 ```
 ### Role registration
 The APP-Role authentication mechanism is enabled and we've defined the policy for our service; we only need to create an `Entity` and assign it the policy:
-```shell
+```shell script
 vault write auth/approle/role/iam policies=iam_policy role_id=iam
 vault write auth/approle/role/iam/custom-secret-id secret_id=iamsecret1
 ```
