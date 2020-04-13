@@ -6,54 +6,11 @@ The library provides a simple interface to retrieve secrets from a Vault instanc
 
 
 ### Setting up Vault
-Launch a Docker instance via the command:
-```sh
-docker run --cap-add=IPC_LOCK -p 8200:8200 -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 'VAULT_ADDR=http://0.0.0.0:8200' -d --name=vault vault
-``` 
 
-* `VAULT_DEV_ROOT_TOKEN_ID=root` sets up the root token as `root`;
-* `VAULT_ADDR=http://0.0.0.0:8200` sets an environment variable in the container specifying the protocol, endpoint and Vault port.
+Vault must be instanced via [local installation](https://www.vaultproject.io/docs/install) or [Docker container](https://hub.docker.com/_/vault), consult the reference guide to determine which instance is most suitable.
 
-The container will log something like this:
-```
+A simple guide to run through steps for the Docker container instance is provided [here](../vault/README.md).
 
-==> Vault server configuration:
-             Api Address: http://0.0.0.0:8200
-                    Cgo: disabled
-         Cluster Address: https://0.0.0.0:8201
-              Listener 1: tcp (addr: "0.0.0.0:8200", cluster address: "0.0.0.0:8201", max_request_duration: "1m30s", max_request_size: "33554432", tls: "disabled")
-               Log Level: info
-                   Mlock: supported: true, enabled: false
-           Recovery Mode: false
-                 Storage: inmem
-                 Version: Vault v1.3.4
-
-WARNING! dev mode is enabled! In this mode, Vault runs entirely in-memory
-and starts unsealed with a single unseal key. The root token is already
-authenticated to the CLI, so you can immediately begin using Vault.
-
-You may need to set the following environment variable:
-
-    $ export VAULT_ADDR='http://0.0.0.0:8200'
-
-The unseal key and root token are displayed below in case you want to
-seal/unseal the Vault or re-authenticate.
-
-Unseal Key: vsCm1BHIkG3AssAmrySQzqReq6nink/k7w3ywfajdLs=
-Root Token: root
-
-Development mode should NOT be used in production installations!
-
-==> Vault server started! Log data will stream in below:
-```
-
-In particular the `Unseal Key` and the `Root Token` must be kept in a secure place and not exposed to prevent malicious activities on the Vault instance.
-
-We proceed by logging in via the CLI:
-```sh
-vault login
-```
-It will be asked to insert a Token as it is the main authentication mechanism on Vault. By inserting the previously acquired `Root Token` we will be authenticated as root.
 
 ### Vault APP-Role authentication mechanism
 Vault-Connector uses the APP-Role authentication mechanism provided by Vault which is meant to be used for service-to-Vault interactions.
@@ -76,7 +33,7 @@ path "auth/approle/login" {
   capabilities = ["create", "read"]
 }
 
-path "secret/data/credentials-database"
+path "kv-v2/data/credentials-database"
 {
   capabilities = ["read"]
 }
@@ -101,9 +58,10 @@ vault write auth/approle/role/iam/custom-secret-id secret_id=iamsecret1
 The `role_id` and the `secret_id` will be used for the login.
 
 ### Inserting the secret
-We will be using the Vault-Connector for many secret retrievals, so let's begin by inserting our first secret representing the connection parameters of a MySQL database:
+We will be using the Vault-Connector for many secret retrievals, so let's begin by enabling the key/value version 2 secret engine and inserting our first secret representing the connection parameters of a MySQL database:
 ```sh
-vault kv put secret/credentials-database url=127.0.0.1:3306 username=iam password=iam schema=credentials
+vault secrets enable kv-v2
+vault kv put kv-v2/credentials-database url=127.0.0.1:3306 username=iam password=iam schema=credentials
 ```
 
 ## Using the Vault-Connector
