@@ -68,7 +68,7 @@ The APP-Role is a powerful mechanism that makes services connect to Vault by sub
 ### Vault policies
 In order to make a role-authenticated service retrieve secrets from Vault we need to explicitly declare a policy which describes what secrets _paths_ the service is allowed to access.
 
-More info about policies can be found in the [official documentation](https://www.vaultproject.io/docs/concepts/policies)
+More info about policies can be found in the [official documentation](https://www.vaultproject.io/docs/concepts/policies).
 
 Let's create the `iam_policy.hcl` file (HCL is the HashiCorp Configuration Language) for our `iam` role that we will create consequently:
 ```hcl
