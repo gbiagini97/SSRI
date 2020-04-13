@@ -1,4 +1,4 @@
-package it.gbiagini.swm.iam.domain;
+package it.gbiagini.swm.iam.configuration;
 
 import it.gbiagini.swm.vault.operation.VaultOperation;
 import org.json.JSONException;
