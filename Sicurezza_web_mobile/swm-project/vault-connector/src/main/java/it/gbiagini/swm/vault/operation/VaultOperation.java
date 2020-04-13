@@ -14,7 +14,7 @@ public class VaultOperation {
     private VaultTemplate vaultTemplate;
 
     public JSONObject getSecret(String path) {
-        VaultResponse response = vaultTemplate.read("secret/data/" + path);
+        VaultResponse response = vaultTemplate.read("kv-v2/data/" + path);
         try {
             return new JSONObject(response != null ? response.getData() : null).getJSONObject("data");
         } catch (JSONException e) {
