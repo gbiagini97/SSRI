@@ -9,7 +9,7 @@ The library provides a simple interface to retrieve secrets from a Vault instanc
 
 Vault must be instanced via [local installation](https://www.vaultproject.io/docs/install) or [Docker container](https://hub.docker.com/_/vault), consult the reference guide to determine which instance is most suitable.
 
-A simple guide to run through steps for the Docker container instance is provided [here](../vault/README.md).
+A simple guide to run through steps for the Docker container instance is provided [here](../vault).
 
 
 ### Vault APP-Role authentication mechanism
