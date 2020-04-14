@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CredentialsRepository extends CrudRepository<Credentials, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
 
-    public Credentials findByUsername(String username);
+    public User findByUsername(String username);
 
-    @Query(value = "SELECT claims FROM credentials WHERE username = :username", nativeQuery = true)
+    @Query(value = "SELECT claims FROM users WHERE username = :username", nativeQuery = true)
     public Optional<String> getClaimsByUsername(@Param("username") String username);
 }

@@ -1,9 +1,9 @@
 package it.gbiagini.swm.iam.test;
 
 import it.gbiagini.swm.iam.IamApplication;
-import it.gbiagini.swm.iam.domain.Credentials;
-import it.gbiagini.swm.iam.domain.CredentialsRepository;
-import it.gbiagini.swm.iam.service.CredentialsService;
+import it.gbiagini.swm.iam.domain.User;
+import it.gbiagini.swm.iam.domain.UserRepository;
+import it.gbiagini.swm.iam.service.UserService;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,13 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 @SpringBootTest(classes = IamApplication.class)
-public class CredentialsServiceTest {
+public class UserServiceTest {
 
     @Autowired
-    private CredentialsService credentialsService;
+    private UserService userService;
 
     @Autowired
-    private CredentialsRepository credentialsRepository;
+    private UserRepository userRepository;
 
     public final static String USERNAME = "username";
     public final static String PASSWORD = "password";
@@ -42,50 +42,50 @@ public class CredentialsServiceTest {
 
     @Test
     public void saveCredentialsWithEncryption() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        credentialsService.registerUser(USERNAME, PASSWORD);
+        userService.registerUser(USERNAME, PASSWORD);
 
-        Credentials credentials = credentialsRepository.findByUsername(USERNAME);
-        assertThat(!credentials.getPassword().equals(PASSWORD));
+        User user = userRepository.findByUsername(USERNAME);
+        assertThat(!user.getPassword().equals(PASSWORD));
 
-        deleteCredentials(credentials);
+        deleteCredentials(user);
     }
 
     @Test
     public void preAuthenticateUser() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        credentialsService.registerUser(USERNAME, PASSWORD);
+        userService.registerUser(USERNAME, PASSWORD);
 
-        boolean isPreAuthenticated = credentialsService.preAuthenticateUser(USERNAME, PASSWORD);
+        boolean isPreAuthenticated = userService.preAuthenticateUser(USERNAME, PASSWORD);
 
         assertThat(isPreAuthenticated);
 
-        deleteCredentials(credentialsRepository.findByUsername(USERNAME));
+        deleteCredentials(userRepository.findByUsername(USERNAME));
 
     }
 
     @Test
     public void insertAndVerifyClaimsForUser() throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-        credentialsService.registerUser(USERNAME, PASSWORD);
+        userService.registerUser(USERNAME, PASSWORD);
 
-        assertThat(Optional.ofNullable(credentialsRepository.getClaimsByUsername(USERNAME)).isEmpty());
+        assertThat(Optional.ofNullable(userRepository.getClaimsByUsername(USERNAME)).isEmpty());
 
-        credentialsService.updateUserClaims(USERNAME, CLAIMS);
+        userService.updateUserClaims(USERNAME, CLAIMS);
 
-        assertThat(Optional.ofNullable(credentialsRepository.getClaimsByUsername(USERNAME)).isPresent());
+        assertThat(Optional.ofNullable(userRepository.getClaimsByUsername(USERNAME)).isPresent());
 
-        JSONObject userClaims = new JSONObject(credentialsRepository.getClaimsByUsername(USERNAME).get());
+        JSONObject userClaims = new JSONObject(userRepository.getClaimsByUsername(USERNAME).get());
 
         assertThat(!userClaims.getJSONObject("claim1").getBoolean("verified"));
         assertThat(userClaims.getJSONObject("claim2").getBoolean("verified"));
 
-        credentialsRepository.findAll().forEach(c -> System.out.println(c.getId()));
-        deleteCredentials(credentialsRepository.findByUsername(USERNAME));
+        userRepository.findAll().forEach(c -> System.out.println(c.getId()));
+        deleteCredentials(userRepository.findByUsername(USERNAME));
     }
 
 
-    private void deleteCredentials(Credentials credentials) {
-        credentialsRepository.delete(credentials);
-        assertThat(!credentialsRepository.existsById(credentials.getId()));
+    private void deleteCredentials(User user) {
+        userRepository.delete(user);
+        assertThat(!userRepository.existsById(user.getId()));
     }
 
 }

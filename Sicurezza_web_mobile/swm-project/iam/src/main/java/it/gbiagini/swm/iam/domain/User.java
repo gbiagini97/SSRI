@@ -10,10 +10,10 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "credentials", uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"username"})
 })
-public class Credentials implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,13 +36,13 @@ public class Credentials implements Serializable {
     @JsonSerialize(using = JsonSerializer.class)
     private String claims;
 
-    public Credentials() {}
+    public User() {}
 
     public Long getId() {
         return id;
     }
 
-    public Credentials setId(Long id) {
+    public User setId(Long id) {
         this.id = id;
         return this;
     }
@@ -51,7 +51,7 @@ public class Credentials implements Serializable {
         return username;
     }
 
-    public Credentials setUsername(String username) {
+    public User setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -60,7 +60,7 @@ public class Credentials implements Serializable {
         return password;
     }
 
-    public Credentials setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -69,7 +69,7 @@ public class Credentials implements Serializable {
         return salt;
     }
 
-    public Credentials setSalt(String salt) {
+    public User setSalt(String salt) {
         this.salt = salt;
         return this;
     }
@@ -78,7 +78,7 @@ public class Credentials implements Serializable {
         return claims;
     }
 
-    public Credentials setClaims(String claims) {
+    public User setClaims(String claims) {
         this.claims = claims;
         return this;
     }
