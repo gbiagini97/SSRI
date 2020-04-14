@@ -45,7 +45,9 @@ MILS systems are in-line with current Cloud development patterns so the SSO revo
 * Data Service: stores data based on it's realm;
 * [HashiCorp Vault](vault/README.md): secret manager that services need to authenticate with in order to retrieve services connection parameters and credentials.
 
-The communication pattern of choice in microservices is gRPC and every component is completely testable to guaranteee the level of assurance required.
+The communication pattern of choice in microservices is gRPC and every component is completely testable to guarantee the level of assurance required.
+
+Identiy Access Manager and Gateway services implement the CQRS architectural pattern with a MySQL database as datasource.
 
 The three services perform authentication at their startup with Vault via their distinct `role_id` and `secret_id`. Vault responds to the login request with an `Access Token`  that they can use to retrieve only the necessary parameters to operate.
 
