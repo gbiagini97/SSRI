@@ -28,6 +28,12 @@ public class CredentialsService {
 
     }
 
+    public void updateUserClaims(String username, String claims) {
+        credentialsRepository.save(
+                credentialsRepository.findByUsername(username)
+                        .setClaims(claims));
+    }
+
     public boolean preAuthenticateUser(String username, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         Map<String, String> encryption = CryptoLib.hash(password);
 
