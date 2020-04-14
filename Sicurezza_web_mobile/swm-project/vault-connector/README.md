@@ -75,11 +75,11 @@ GRANT CREATE USER ON *.* to 'iam'@'%';
 ## Using the Vault-Connector
 The library is not intended to be used as a standalone application but to be part of a service that needs to interact with Vault in order to retrieve secrets.
 
-For instance the `iam` service will need MySQL connection parameters to successfully startup.
+For instance the [IAM service](../iam) will need MySQL connection parameters to successfully startup.
 
 
 ### Perform the service authentication
-The `iam` service needs the APP-Role credentials in order to perform the authentication with Vault, otherwise an exception will be thrown.
+The [IAM service](../iam) needs the APP-Role credentials in order to perform the authentication with Vault, otherwise an exception will be thrown.
 
 The library is flexible so the credentials can be inserted in the externalized [configuration file](src/main/resources/application.yaml), or more securely injected via environment variables.
 
