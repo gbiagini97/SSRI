@@ -116,6 +116,8 @@ It is possible to generate new unseal keys, provided you have a quorum of
 existing unseal keys shares. See "vault operator rekey" for more information.
 ```
 
+The `root key ceremony` implies the distribution of unseal keys as per logged instructions. At first startup and every time the server is restarted it will automatically seal.
+
 In order to unseal Vault we should use at least 3 keys via:
 ```sh
 vault operator unseal <Unseal-Key-X>
