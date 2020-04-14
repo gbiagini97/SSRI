@@ -1,11 +1,11 @@
 # SWM-Project
 
 ## Overview
-This project purpose is to build a **Single-Sign-On platform** inspired by the **MILS** (Multiple Independent Levels of Security/Safety) security architecture which is built upon the secrecy based **Bell-LaPadula model** and **William Wulf**'s works.
+This project purpose is to build a **Single-Sign-On platform** inspired by the **MILS** (Multiple Independent Levels of Security/Safety) security architecture, which is built upon the secrecy based **Bell-LaPadula model**, and **William Wulf**'s works.
 
 MILS is a high assurance security architecture that supports the coexistence of untrusted and trusted components, based on verifiable separation mechanisms and controlled information flow.
 
-William Wulf, in his work about [HYDRA - The kernel of a multiprocessor operating system](https://dl.acm.org/doi/10.1145/355616.364017), references the need of a strong separation between protection and security when referring to access control systems, a concept that Bell-LaPadula principles lack.
+William Wulf, in his work about [HYDRA - The kernel of a multiprocessor operating system](https://dl.acm.org/doi/10.1145/355616.364017), references the need of a strong separation between protection and security when referring to access control systems, a concept that lacks in Bell-LaPadula principles.
 
 In his paper he stated:
 > Protection is a Mechanism, security is a Policy. 
