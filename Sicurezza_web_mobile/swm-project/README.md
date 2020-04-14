@@ -40,10 +40,10 @@ The AT properties implies the need of many _security-managers_ with a defined _s
 
 ## Mechanism
 MILS systems are in-line with current Cloud development patterns so the SSO revolves around 3 microservices built from scratch and a secret manager:
-* Identity Access Manager: stores encrypted credentials and users claims;
+* [Identity Access Manager](iam/README.md): stores encrypted credentials and users claims;
 * Gateway: main entrypoint that handles incoming requests for services verifing the validity of the Access Token and the necessary claims to access the service realm;
 * Data Service: stores data based on it's realm;
-* HashiCorp Vault: secret manager that services need to authenticate with in order to retrieve services connection parameters and credentials.
+* [HashiCorp Vault](vault/README.md): secret manager that services need to authenticate with in order to retrieve services connection parameters and credentials.
 
 The communication pattern of choice in microservices is gRPC and every component is completely testable to guaranteee the level of assurance required.
 
