@@ -61,13 +61,21 @@ The `role_id` and the `secret_id` will be used for the login.
 We will be using the Vault-Connector for many secret retrievals, so let's begin by enabling the key/value version 2 secret engine and inserting our first secret representing the connection parameters of a MySQL database:
 ```sh
 vault secrets enable kv-v2
-vault kv put kv-v2/credentials-database url=127.0.0.1:3306 username=iam password=iam schema=credentials
+vault kv put kv-v2/credentials-database url=127.0.0.1:3306 username=iam password=iam schema=iam
 ```
 
 ## Using the Vault-Connector
 The library is not intended to be used as a standalone application but to be part of a service that needs to interact with Vault in order to retrieve secrets.
 
 For instance the `iam` service will need MySQL connection parameters to successfully startup.
+
+We need to initialize the database and create a user for the `iam` service with the credentials written on Vault:
+```sql
+CREATE DATABASE iam;
+CREATE USER 'iam'@'%' IDENTIFIED BY 'iam';
+GRANT ALL PRIVILEGES ON iam.* TO 'iam'@'%' WITH GRANT OPTION;
+GRANT CREATE USER ON *.* to 'iam'@'%';
+```
 
 ### Perform the service authentication
 The `iam` service needs the APP-Role credentials in order to perform the authentication with Vault, otherwise an exception will be thrown.
