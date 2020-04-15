@@ -39,6 +39,7 @@
 
     <modules>
         <module>iam</module>
+        <module>iam-grpc</module>
         <module>crypto-lib</module>
         <module>vault-connector</module>
         <module>logging-helper</module>
