@@ -1,6 +1,5 @@
 package it.gbiagini.swm.iam;
 
-import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -13,7 +12,6 @@ public class IamApplication {
         ConfigurableApplicationContext context =
                 new SpringApplicationBuilder(IamApplication.class)
                         .registerShutdownHook(false)
-                        .web(WebApplicationType.SERVLET)
                         .run(args);
 
         Runtime.getRuntime().addShutdownHook(new ShutdownHook(context));

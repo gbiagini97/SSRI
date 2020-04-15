@@ -6,19 +6,13 @@ vault:
   role-id: ${ROLE_ID}
   secret-id: ${SECRET_ID}
 
-server:
-  port: 18180
-  servlet:
-    contextPath: /iam
-
 spring:
   jpa:
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
     hibernate:
       ddl-auto: update
 
+grpc:
+  server:
+    port: 19190
 
 
