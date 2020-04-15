@@ -25,6 +25,25 @@ public class CryptoLib {
         return result;
     }
 
+    public static boolean verify(String password, String saltString, String hashedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        byte[] salt = fromHex(saltString);
+        byte[] hash = fromHex(hashedPassword);
+
+
+        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt,65536, 128);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] testHash = skf.generateSecret(spec).getEncoded();
+
+        int diff = hash.length ^ testHash.length;
+        for(int i = 0; i < hash.length && i < testHash.length; i++)
+        {
+            diff |= hash[i] ^ testHash[i];
+        }
+        return diff == 0;
+
+    }
+
     private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[64];
@@ -43,5 +62,15 @@ public class CryptoLib {
         }else{
             return hex;
         }
+    }
+
+    private static byte[] fromHex(String hex) throws NoSuchAlgorithmException
+    {
+        byte[] bytes = new byte[hex.length() / 2];
+        for(int i = 0; i<bytes.length ;i++)
+        {
+            bytes[i] = (byte)Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+        }
+        return bytes;
     }
 }
