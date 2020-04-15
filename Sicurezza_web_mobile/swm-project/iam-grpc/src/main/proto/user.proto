@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_package = "it.gbiagini.swm.iam.grpc";
+
+service User{
+
+    rpc registerUser(Credentials) returns (Response);
+    rpc updateUserClaims(UpdateClaimsRequest) returns (Response);
+    rpc preAuthenticateUser(Credentials) returns (Response);
+}
+
+
+message Credentials {
+    string username = 1;
+    string password = 2;
+}
+
+message UpdateClaimsRequest {
+    string username = 1;
+    string claims = 2;
+}
+
+message Response {
+    int32 responseCode = 1;
+    string responseMessage = 2;
+}
+
+
+
