@@ -36,17 +36,10 @@ target/
 *.tar.gz
 *.rar
 
-
 *.log*
 *.no-logback-spring.xml
 *.cql
 
-*/test/resources/*
-
-asset-service/config/stocks.json
-
-asset-service/config/stocks_off.json
-
 *.gz
 
-asset-service/src/test/resources/
+.attach_pid*
