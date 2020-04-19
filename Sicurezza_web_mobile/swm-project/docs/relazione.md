@@ -39,7 +39,7 @@ A MILS system employs a set of properties, commonly acronymed as **NEAT**:
 The _NE_ properties imply a strong _separation of duty_ for each component of the SSO.
 
 The _AT_ properties implies the need of many _security-managers_ with a defined _scope_ that are constantly monitoring every request of their scope and are being constantly monitored by all others security-managers to prevent hacking or tweaking.
-
+___
 
 ## Mechanism
 MILS systems are in-line with current Cloud development patterns so the SSO revolves around 2 microservices built from scratch, a Service Mesh Agent and a Secret Manager:
@@ -59,7 +59,6 @@ Several state-of-art architectural patterns are applied for reliability in distr
 * Circuit Breaking: if the requested service is present in the service mesh configuration, a rollback is performed;
 * Secure Service Communication: TLS certificates are used for mutual authentication between the SSO and the requested service.
 
-
 ### Service Registration
 The following diagram describes the process:
 ![Service_Registration](resources/Service_Registration-Sequence_Diagram.jpeg)
@@ -71,9 +70,7 @@ All interactions with the Users Registry is referenced in the subsequent diagram
 ![Users_Operations](resources/Users_Operations-Sequence_Diagram.jpeg)
 
 #### Registration
-The password is hashed via an implementation of the PBKDF2 key-derivation function described the [RFC-2898](https://tools.ietf.org/html/rfc2898).
-
-The function takes the `password` as an input and proceeds to calculate the derivation function by using 5 declared parameters:
+The password is hashed via an implementation of the PBKDF2 key-derivation function described the [RFC-2898](https://tools.ietf.org/html/rfc2898). The function takes the `password` as an input and proceeds to calculate the derivation function by using 5 declared parameters:
 * PseudoRandom Function: an efficiently computable function that emulates a _random oracle_, in this case is used HMAC-SHA1;
 * Password: the `password` itself;
 * Salt: randomly generated at every function call, with a length of 64 bits as per general recommendation;
@@ -97,7 +94,7 @@ Some fields make use of proprietary formats which can only be judged by members 
 ### Services Requests
 Users can interact with the registered services (if they have the necessary verified claims) via the SSO's gateway that will take care of forwarding the request in a secured context:
 ![Service_Request_Forwarding](resources/Service_Request_Forwarding-Sequence_Diagram.jpeg)
-
+___
 
 ## Conclusions
 The main difference between a traditional SSO like Kerberos is about the **service availability and connection responsability**.
