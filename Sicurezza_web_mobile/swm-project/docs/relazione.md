@@ -39,7 +39,6 @@ A MILS system employs a set of properties, commonly acronymed as **NEAT**:
 The _NE_ properties imply a strong _separation of duty_ for each component of the SSO.
 
 The _AT_ properties implies the need of many _security-managers_ with a defined _scope_ that are constantly monitoring every request of their scope and are being constantly monitored by all others security-managers to prevent hacking or tweaking.
-___
 
 ## Mechanism
 MILS systems are in-line with current Cloud development patterns so the SSO revolves around 2 microservices built from scratch, a Service Mesh Agent and a Secret Manager:
@@ -94,7 +93,6 @@ Some fields make use of proprietary formats which can only be judged by members 
 ### Services Requests
 Users can interact with the registered services (if they have the necessary verified claims) via the SSO's gateway that will take care of forwarding the request in a secured context:
 ![Service_Request_Forwarding](resources/Service_Request_Forwarding-Sequence_Diagram.jpeg)
-___
 
 ## Conclusions
 The main difference between a traditional SSO like Kerberos is about the **service availability and connection responsability**.
