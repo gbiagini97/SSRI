@@ -20,7 +20,7 @@ In his paper he stated:
 > While ownership is useful concept for certain "security" strategies, to include a concept at the most primitive levels would lead to the exclusion of the construction of certain other classes of truly secure systems.
  
 Let's now introduce the policy and the mechanism.
-___
+
 ## Policy
 The policy is a **Claim-Based Access Control** for Subjects and Objects abandoning the hierarchical Role-Based system:
 
@@ -39,7 +39,7 @@ A MILS system employs a set of properties, commonly acronymed as **NEAT**:
 The _NE_ properties imply a strong _separation of duty_ for each component of the SSO.
 
 The _AT_ properties implies the need of many _security-managers_ with a defined _scope_ that are constantly monitoring every request of their scope and are being constantly monitored by all others security-managers to prevent hacking or tweaking.
-___
+
 ## Mechanism
 MILS systems are in-line with current Cloud development patterns so the SSO revolves around 2 microservices built from scratch, a Service Mesh Agent and a Secret Manager:
 * **Subjects Registry**:
@@ -57,13 +57,17 @@ Several state-of-art architectural patterns are applied for reliability in distr
 * Health Checking: the service mesh configuration is a representation of alive and dead services;
 * Circuit Breaking: if the requested service is present in the service mesh configuration, a rollback is performed;
 * Secure Service Communication: TLS certificates are used for mutual authentication between the SSO and the requested service.
-___
+
+<div style="page-break-after: always;"></div>
+
 ### Service Registration
 The following diagram describes the process:
 ![Service_Registration](resources/Service_Registration-Sequence_Diagram.jpeg)
 
 The service and SSO perform a mutual authentication by issueing each other's certificate; the SSO stores the service certificate in the vault and updates the service graph. The realm gets resolved via the Service Registry pattern.
-___
+
+<div style="page-break-after: always;"></div>
+
 ### User Operations
 All interactions with the Users Registry is referenced in the subsequent diagram:
 ![Users_Operations](resources/Users_Operations-Sequence_Diagram.jpeg)
@@ -89,12 +93,14 @@ For certain realms the process of claims validation can be sometimes automated: 
 
 Some fields make use of proprietary formats which can only be judged by members of the realms, but if we take into account the possiblity to register new services, third verified parties can take care of this.
 
-___
+<div style="page-break-after: always;"></div>
+
 ### Services Requests
 Users can interact with the registered services (if they have the necessary verified claims) via the SSO's gateway that will take care of forwarding the request in a secured context:
 ![Service_Request_Forwarding](resources/Service_Request_Forwarding-Sequence_Diagram.jpeg)
 
-___
+<div style="page-break-after: always;"></div>
+
 ## Conclusions
 The main difference between a traditional SSO like Kerberos is about the **service availability and connection responsability**.
 Kerberos provides the User with the ticket needed to authenticate with a service, but the subsequent interactions with are completely delegated to the user.
