@@ -52,7 +52,7 @@ MILS systems are in-line with current Cloud development patterns so the SSO revo
 
 The communication pattern of choice between the microservices is gRPC and the isolation/bounded-context of each component makes it indipendently testable to guarantee the level of assurance required.
 
-Several state-of-art architectural patters are applied for reliability in distributed environments:
+Several state-of-art architectural patterns are applied for reliability in distributed environments:
 * Service Discovery: with Self-Registration and Service Registry;
 * API Gateway: a service that provides each client with unified interface to services;
 * Health Checking: the service mesh configuration is a representation of alive and dead services;
@@ -64,9 +64,7 @@ Several state-of-art architectural patters are applied for reliability in distri
 The following diagram describes the process:
 ![Service_Registration](resources/Service_Registration-Sequence_Diagram.jpeg)
 
-
 The service and SSO perform a mutual authentication by issueing each other's certificate; the SSO stores the service certificate in the vault and updates the service graph. The realm gets resolved via the Service Registry pattern.
-
 
 ### User Operations
 All interactions with the Users Registry is referenced in the subsequent diagram:
