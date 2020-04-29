@@ -1,0 +1,151 @@
+/* Built-ins */
+h1.wikiaction { font-size:150%; margin:0px; }
+#wikiedit form { margin:1px solid #000; }
+#wikiedit textarea { width:720px; height:350px; }
+.indent { margin-left:30px; }
+.outdent { margin-left:30px; text-indent:-30px; }
+a.varlink { }
+.diffbox { width:720px; }
+.diffadd code, .diffdel code { padding-right:1px; white-space:normal; }
+.diffrestore, .difftype, .difftime, .diffauthor { font-size:8pt; }
+.diffrestore { margin-top:4px; }
+.wikitrail { white-space:nowrap; }
+.search, .wikisearch { margin-top:0px; margin-bottom:0px; }
+.searchbox, .wikisearchbox, .newpagetext { background-color:#fcfcfc; border:1px solid #666; margin-right:3px; padding-left:3px; }
+.searchbutton, .wikisearchbutton, .newpagebutton { background-color:#c2d2f2; border:1px solid #666; vertical-align: middle; }
+#wikipreview { width:720px;  padding:10px; padding-top:4px; border:1px dotted #ccc; }
+
+/* General settings */
+body { color:#000; background-color:#565E67; margin-top:20px; }
+hr { color:#ccc }
+img { border-width:0px; border-color:#ccc; }
+
+/* Font Typeface */
+body { font-family: Arial,Helvetica,sans-serif; }
+/* Font Sizes */
+body { font-size:9.4pt; }
+textarea, pre, tt, code { font-size:10pt; }
+small { font-size:0.85em; }
+h1 code, h1 pre, h2 code, h2 pre, h3 code, h3 pre, h4 code, h4 pre, h5 code,  h5 pre { font-size:100%; }
+h1 { font-size:2.0em; margin-top:15px; margin-bottom:8px; }
+h2 { font-size:1.47em; margin-top:9px; margin-bottom:6px; }
+h3 { font-size:1.27em; margin-top:7px; margin-bottom:5px; }
+h4 { font-size:1.08em; margin-top:6px; margin-bottom:5px; }
+h5 { font-size:1.0em; margin-top:5px; margin-bottom:4px; }
+h6 { font-size:1.0em; margin-top:5px; margin-bottom:4px; font-weight:normal; }
+
+/* Links */
+a { font-weight:bold; color:#003366; text-decoration:none; }
+a:visited { font-weight:bold; color:#003389; text-decoration:none; }
+a:hover { color:#0033cc; text-decoration:underline; }
+a:active { color: #7b68ee; }
+
+/* Upper Table */
+#siteheadtable { background-image: url(../sticWin/header.jpg); background-repeat: repeat-x;	
+				height: 94px; }
+#headlogo { color:#fff; font-size: 16pt; vertical-align: middle; text-align: left;  
+			padding-left: 15px; font-family: "Courier New", Courier, monospace; 
+			font-weight: bold; height: 30px; width: 180px;}
+#headlogo a { color:#a9bde2; }
+#header-links { height:30px; }
+
+#pagetitle { color:#e5eaf4; vertical-align: middle; text-align: left; padding-left:20px; 
+			font-size: 10pt;  height: 30px; width: 560px; }
+#siteheadfind { text-align: right; vertical-align: bottom; height: 30px; padding-right: 10px;  width: 930px; }
+#siteheadfind form.search { display:inline; }
+#siteheadfind input.searchbox { font-size:9px; width: 150px; padding-left: 10px; }
+#siteheadfind input.searchbut { height: 20px; width: 30px; font-size:7pt;}
+#siteheadfind a { text-decoration: none; font-size:9pt; color: #fff; }
+#siteheadfind a:hover { text-decoration: none; }
+
+#riemp1 { height: 5px; }
+#riemp2 { width: 10px;  }
+#riemp3 { width: 20px;}
+#riemp4 { width: 300px;}
+#riemp5 { width: 30px;}
+
+#siteheadcmds { padding-top:2px; }
+#siteheadcmds td {  font-size: 10pt; }
+#siteheadmenu { text-align: center; vertical-align: middle;}
+#siteheadmenu a { display: block; color: #fff; }
+#siteheadmenu a:hover { background-image: url(subheaderHover.gif);  
+						background-repeat: repeat-x; text-decoration: none;}
+						
+#navi { padding-top:5px; }
+#navi td {  font-size: 8pt; }
+						
+#log { text-align: center; vertical-align: middle; padding-right: 5px; }
+#log a { display: block; color: #fff; font-size: 8pt; }
+#log a:hover { background-image: url(subheaderHover.gif); background-repeat: repeat-x;  text-decoration: none;} 
+
+/* Main content table */
+#contentmain { background-image: url(mainBody.gif); background-repeat: repeat-y;}
+
+/* Left column */
+#mainsidebar { font-size:10pt; color:#000; width:170px;  vertical-align:top; padding-top: 5px; }
+#mainsidebar a { display: block; height: 22px; line-height: 20px;  color: #0e2c60; text-decoration: none; 
+				padding-left: 5px; padding-right: 5px; }
+#mainsidebar li a:hover { font-weight: bold; background-image: url(prova.gif); background-repeat: no-repeat; }
+#mainsidebar a:hover { font-weight: bold; background-color: #D9E4F2; }
+#mainsidebar strong { white-space:nowrap; margin-left:4px; margin-right:2px; }
+#mainsidebar .indent { margin-left:10px; margin-right:2px; }
+
+#mainsidebar h1, #mainsidebar h5, #mainsidebar h6, #mainsidebar .wikisearch,  
+#mainsidebar .divider, #mainsidebar .newpage, #mainsidebar .sidehead 
+{	white-space: nowrap; line-height: 20px; font-size: 0.8em; font-weight: bold; 	
+	text-align: left; padding-left: 20px; background-image: url(menuHeader.gif);
+	background-repeat: repeat-x; width: 140px; }
+
+#mainsidebar ul { white-space:nowrap; font-size:9pt; background-color: #fefefe;   
+				margin-left:10px; margin-right: 10px; padding:6px; list-style-type:none; }
+#sidebarbottom img { border:0px; }
+#sidebarbottom a, #sidebarbottom a:visited { color:#999; }
+#sidebarbottom, #sidebarbottom a, #sidebarbottom a:visited { display:none; }
+
+/* Main site area */
+#sitepagetitle h1 { margin:0px; padding-bottom:3px; font-weight:500; }
+#mainsitetext { color:#000; vertical-align:top; }
+#sitebody { width:775px; padding:20px; padding-top: 10px;   }
+#sitebody img { border-width:1px; }
+#sitebody, #sitebody table { font-size:9.4pt; font-family: Verdana,Arial,Helvetica,sans-serif; }
+
+/* Site footer */
+#footleft { color: #fff; font-size:9pt; padding-left:15px; }
+#footmiddle { font-size:9pt; text-align:center; color:#000; }
+#footeditsb { display:none; }
+#footright { color: #fff; font-size:9pt; text-align:right; padding-right:25px; }
+#foot { background-image: url(footer.gif); height: 30px; }
+#foot a { color: #fff; }
+
+/* Make site-related links non-bold */
+#mainsidebar, #mainsidebar a, #mainsidebar h1, #mainsidebar h6 { font-weight:normal; }
+#mainsidebar strong { font-weight:normal; }
+#footleft, #footleft a, #footmiddle, #footmiddle a, #footright, #footright a { font-weight:normal; }
+
+/* Make links in content area non-bold */
+#sitebody a { font-weight:normal; text-decoration:underline; }
+#sitebody a:visited { font-weight:normal; text-decoration:underline; }
+
+@media print {
+/* Default Fonts */
+body { font-family: arial, helvetica, geneva, sans-serif; }
+body, td, th { color:#000000; }
+small { font-size:0.85em; }
+
+/* Misc. */
+body { width:auto; background-color:#ffffff; margin:0px; padding:0.5em; }
+img { border-width: 1px; }
+
+/* Links */
+a:link { color:#444444; font-weight:bold; text-decoration:none; }
+a:visited { color:#444444; font-weight:bold; text-decoration:none; }
+a.sitelink:hover { color: #444444; text-decoration:underline; }
+a.createlink { color:#444444; }
+a.createlink:visited { color:#444444; }
+a.createlink:hover { color:#ff2222; }
+#mainsidebar, #siteheadtable { display:none; }
+#footleft, #footleft a, #footright, #footright a { display:none;}
+#mainsitetext { border-right:0px; border-left:0px; }
+#mainsitefoot { padding-top:0px; }
+#footmoddle, #footlastmod { text-align:left; }
+}

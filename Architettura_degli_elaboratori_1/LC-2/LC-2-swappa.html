@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+	<title>Swappa :: Architettura degli elaboratori - LC2 </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="Content-Language" content="it">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="imagetoolbar" content="no">
+	<meta name="robots" content="noarchive">
+	<meta name="verify-v1" content="W0mbMJBKN/iA23fcLw5UzRqXfwbh0SdGZ62YJgVCtqg=">
+	<meta name="description" content="Wiki creato da e per gli studenti del DTI dell'Università di Crema (Informatica, Sicurezza, DTI). Contiene appunti, riassunti, guide, esercizi, temi d'esame.">
+	<meta name="keywords" content="wiki, università, studenti, crema, appunti, riassunti, guide, informatica, sicurezza, esami, programmazione, recensioni, esercizi, progetti">
+	
+  <link rel="icon" href="http://www.swappa.it/wiki/pub/skins/sticWin/sticWinicon.gif" type="image/gif">
+  <link rel="SHORTCUT ICON" href="http://www.swappa.it/wiki/pub/skins/sticWin/sticWinicon.gif">
+	<!--HeaderText--><style type="text/css"><!--
+  ul, ol, pre, dl, p { margin-top:0px; margin-bottom:0px; }
+  code.escaped { white-space: nowrap; }
+  .vspace { margin-top:1.33em; }
+  .indent { margin-left:40px; }
+  .outdent { margin-left:40px; text-indent:-40px; }
+  a.createlinktext { text-decoration:none; border-bottom:1px dotted gray; }
+  a.createlink { text-decoration:none; position:relative; top:-0.5em;
+    font-weight:bold; font-size:smaller; border-bottom:none; }
+  img { border:0px; }
+  
+.progress-bar {
+	display: block;
+	background: transparent; 
+	width: 520px;
+	font-size: 1px; /* for IE */
+	margin: 2px 0;
+}
+
+.progress-bar .pb1, .progress-bar .pb2, .progress-bar .pb3, .progress-bar .pb4 {
+	display: block; 
+	background: #fff; 
+	border-left:  1px solid #999; 
+	border-right: 1px solid #999;
+
+	overflow: hidden; 
+	height: 1px; 
+}
+.progress-bar .pb1 { margin: 0 4px; background: #999;}
+.progress-bar .pb2 { margin: 0 2px; border-width: 0 2px; }
+.progress-bar .pb3 { margin: 0 1px; }
+.progress-bar .pb4 { height: 11px; padding: 0 3px; }
+.progress-bar .pb5 { display: block; background: #eeeeef; overflow:hidden; }
+
+.progress-bar .bar {
+	display: block;
+	background: #a5bbd8;
+	height: 11px;
+	padding: 0;
+}
+.editconflict { color:green; 
+  font-style:italic; margin-top:1.33em; margin-bottom:1.33em; }
+
+  table.markup { border:2px dotted #ccf; width:90%; }
+  td.markup1, td.markup2 { padding-left:10px; padding-right:10px; }
+  table.vert td.markup1 { border-bottom:1px solid #ccf; }
+  table.horiz td.markup1 { width:23em; border-right:1px solid #ccf; }
+  table.markup caption { text-align:left; }
+  div.faq p, div.faq pre { margin-left:2em; }
+  div.faq p.question { margin:1em 0 0.75em 0; font-weight:bold; }
+  div.faqtoc div.faq * { display:none; }
+  div.faqtoc div.faq p.question 
+    { display:block; font-weight:normal; margin:0.5em 0 0.5em 20px; line-height:normal; }
+  div.faqtoc div.faq p.question * { display:inline; }
+   
+    .frame 
+      { border:1px solid #cccccc; padding:4px; background-color:#f9f9f9; }
+    .lfloat { float:left; margin-right:0.5em; }
+    .rfloat { float:right; margin-left:0.5em; }
+a.varlink { text-decoration:none; }
+
+--></style>
+  <link rel="stylesheet" href="LC-2-swappa_files/wsplus.css" type="text/css">
+  <!--[if IE]><style type='text/css' media='screen'>
+    body { behavior:url('http://www.swappa.it/wiki/pub/wsplus/csshover.htc'); }
+    .rollover * { visibility: visible; }
+  </style><![endif]-->
+<script type="text/javascript" async="" src="LC-2-swappa_files/ga.js"></script><script type="text/javascript" src="LC-2-swappa_files/shCore.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushCSharp.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushCpp.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushJava.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushPerl.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushPhp.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushPython.js"></script><script type="text/javascript" src="LC-2-swappa_files/shBrushRuby.js"></script> <link type="text/css" rel="stylesheet" href="LC-2-swappa_files/shCore.css">
+  <link type="text/css" rel="stylesheet" href="LC-2-swappa_files/shThemeDefault.css">
+  <script type="text/javascript">
+  	SyntaxHighlighter.config.clipboardSwf = 'http://www.swappa.it/wiki/pub/syntaxlove/scripts/clipboard.swf';
+  	SyntaxHighlighter.all();
+  </script>  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="LC-2-swappa_files/sticWin.css" type="text/css">
+  
+</head>
+
+<body>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-5744461-3']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+
+	<!--PageHeaderFmt-->
+	<table summary="Site: Header" id="siteheadtable" width="960" cellspacing="0" cellpadding="0" border="0" align="center">
+		<tbody><tr>
+			<td colspan="2" id="navi">
+			<table width="420" cellspacing="0" cellpadding="0" align="right">
+			<tbody><tr>
+				<td id="navi" width="300">
+					<!-- Inizio Codice Shinystat -->
+					<script type="text/javascript" language="JavaScript" src="LC-2-swappa_files/getcod"></script>
+					<noscript>
+					<a href="http://www.shinystat.com/it" target="_top">
+					<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=swappa" alt="Contatori visite gratuiti" border="0"></a>
+					</noscript>
+					<!-- Fine Codice Shinystat -->
+				</td>
+				<td id="riemp2"></td>
+				<td id="navi" width="80">
+					<a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/2.5/it/">
+						<img alt="Creative Commons License" style="border-width:0" src="LC-2-swappa_files/80x15.png" width="80" height="15">
+					</a>
+				</td>
+			
+				<td id="riemp5"></td>
+				
+			</tr>
+			</tbody></table>
+			</td>	
+		</tr>
+		<tr>
+			<td colspan="2" id="siteheadfind">
+				<a href="http://www.swappa.it/wiki/Site.Search" title="Cerca nel sito" rel="nofollow">cerca</a> 
+				<form class="siteheadfind search" action="http://www.swappa.it/wiki">
+				<input class="searchbox" type="text" name="q" size="40">
+				<input class="searchbut" type="submit" value="vai">
+				<!-- version > beta53 -->
+				<!-- <input type='hidden' name='n' value='Uni.ADE-LC2' /><input type='hidden' name='action' value='search' /> -->
+				<!-- version < beta53 -->
+				<input type="hidden" name="n" value="Site.Search">
+				</form>
+			</td>					
+		</tr>
+		<tr><td id="riemp1"></td></tr>
+		<tr>
+			<td id="pagetitle" width="560">
+				Architettura degli elaboratori - LC2
+			</td>
+			<td id="siteheadcmds">
+			<table width="360" cellspacing="0" cellpadding="0" align="right">
+			<tbody><tr>
+				<td id="siteheadmenu">
+					<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=edit" title="Modifica la pagina">modifica</a>
+				</td> 
+				<td id="siteheadmenu">
+					<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=diff" title="Ultime modifiche della pagina">cronologia</a>
+				</td>
+				<td id="siteheadmenu">
+					<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=print" title="Stampa la pagina">stampa</a>
+				</td>	
+				<td id="riemp5"></td>
+				<td id="log">
+					<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=login" title="Login">login</a>
+				</td>	
+				<td id="log">
+					<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=logout" title="Logout">logout</a>
+				</td>	
+				<td id="riemp2"></td>
+			</tr>
+			</tbody></table>
+			</td>				
+		</tr>  
+		
+	</tbody></table>
+	<!--/PageHeaderFmt-->
+
+	<table summary="Site: Main" id="contentmain" width="960" cellspacing="0" cellpadding="0" border="0" align="center">
+	<tbody>
+		<tr>
+			<td id="riemp2"></td>
+			<!--PageLeftFmt-->
+			<td id="mainsidebar">
+			
+			<p class="sidehead"> Wiki
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Main/HomePage">HomePage</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Main/Forum">Forum</a>
+</li><li><a target="_blank" class="urllink" href="http://www.swappa.it/gallery/main.php" title="" rel="nofollow">Galleria</a>
+</li></ul><p class="vspace sidehead"> UniCrema
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/UniCrema">Tutte le materie</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/Docenti">Docenti</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Uni/Progetti">Progetti</a>
+</li></ul><p><br clear="all">
+</p>
+<p class="vspace sidehead"> Materie per semestre
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/PrimoSemestre">Primo semestre</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/SecondoSemestre">Secondo semestre</a>
+</li></ul><p class="vspace sidehead"> Materie per anno
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/PrimoAnno">Primo anno</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/SecondoAnno">Secondo anno</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/TerzoAnno">Terzo anno</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/ComplementariOMagistrale">Complem. / magistrale</a>
+</li></ul><p class="vspace sidehead"> Materie per laurea
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/Informatica">Informatica</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/Sicurezza">Sicurezza</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/TS">TS</a>
+</li></ul><p><br clear="all">
+</p>
+<p class="vspace sidehead"> Help
+</p><ul><li><a class="wikilink" href="http://www.swappa.it/wiki/Category/GuideInterneWiki">Guide interne</a>
+</li><li><a class="wikilink" href="http://www.swappa.it/wiki/Main/FAQ">FAQ</a>
+</li></ul><div class="vspace"></div>
+
+			
+				<div id="sidebarbottom">
+					<span style="white-space:nowrap;">
+						<a rel="nofollow" href="http://validator.w3.org/check/referer" title="Validate XHTML">XHTML</a>
+					</span>
+				</div>
+			</td>
+			<!--/PageLeftFmt-->
+			<td id="riemp1"></td>
+			<td id="mainsitetext">
+				<!-- table to work around an NS4 bug -->
+				<table summary="Content Body" id="sitebody" cellspacing="0" cellpadding="0" border="0"> 
+					<tbody><tr>
+						<td>
+							<!--PageTitleFmt-->
+							<div id="sitepagetitle" title="Architettura degli elaboratori - LC2 was last modified on February 06, 2011, at 03:18 PM">
+							<span style="display:none;">Architettura degli elaboratori - LC2</span>	
+							</div>
+							<!--PageText-->
+<div id="wikitext">
+<p>
+<a class="wikilink" href="http://www.swappa.it/wiki/Uni/ArchitetturaDegliElaboratori">Torna alla pagina di Architettura degli elaboratori</a>
+</p><hr>
+<div class="vspace"></div><div class="round lrindent evvai"> 
+<p>Questa pagina è stata aggiornata GRAZIE agli appunti che AVETE INVIATO nel periodo di chiusura della sezione UniCrema!! <strong><em>È SERVITA A QUALCOSA, NO?!</em></strong> <span style="font-size:144%">;)</span>
+</p></div>
+<div class="vspace"></div><pre style="text-align: center; background-color: #ffe4c4; border: 2px solid #cccccc; font-size: 13pt; padding: 5px;"> <strong>:: Architettura degli elaboratori - LC2 ::</strong>
+</pre><p class="vspace">Qui c'è un prontuario per l'LC2.
+</p>
+<div class="vspace"></div><h2>Registri della CPU</h2>
+<ul><li>Da <strong>R0</strong> a <strong>R7</strong>, <strong>GPR</strong> cioè i registri per le normali operazioni
+</li><li><strong>CC</strong>, <strong>Condition Code</strong> cioè il segno dell'ultimo numero scritto in un registro (N, Z o P)
+</li><li><strong>PC</strong>, <strong>Program Counter</strong> cioè l'indirizzo dell'ultima operazione eseguita (per saper quale eseguire dopo)
+</li></ul><div class="vspace"></div><h2>Istruzioni operative (Operazioni logiche)</h2>
+<ul><li><strong>AND DR,SR1,SR2</strong> – Scrive in DR il prodotto logico bit a bit dei valori contenuti in SR1 e SR2
+</li><li><strong>AND DR,SR1,Imm5</strong> – Scrive in DR il prodotto logico bit a bit di SR1 e 0000 0000 000 imm5
+</li><li><strong>ADD DR,SR1,SR2</strong> – Scrive in DR la somma logica di SR1 e SR2
+</li><li><strong>ADD DR,SR1,Imm5</strong> – Scrive in DR la somma logica di SR1 e 0000 0000 000 imm5
+</li><li><strong>NOT BR,DR</strong> – Scrive in DR la negazione logica di BR
+</li></ul><div class="vspace"></div><h2>Istruzioni di trasferimento (Save e Load da celle a cpu e viceversa)</h2>
+<ul><li><strong>LEA DR,label</strong> – Carica in DR l'indirizzo rappresentato dalla label, rimanendo nella stessa “pagina”
+</li><li><strong>LD DR,label</strong> – Carica in DR il contenuto della cella che si trova all'indirizzo rappresentato dalla label
+</li><li><strong>LDI DR,label</strong> – Carica in DR il contenuto della cella che si trova all'indirizzo contenuto nella label
+</li><li><strong>LDR DR,BR,index6</strong> – Carica in DR il contenuto della cella all'indirizzo BR+0000 0000 00 index6
+<div class="vspace"></div></li><li><strong>ST SR,label</strong> – Salva nell'indirizzo rappresentato dalla label il contenuto di SR
+</li><li><strong>STI SR, label</strong> – Salva nell'indirizzo 
+rappresentato dalla label il contenuto della cella il quale indirizzo è 
+scritto in SR (simile a LDI, serve per scrivere in tutte le celle anche 
+fuori dalla pagina)
+</li><li><strong>STR SR,BR,index6</strong> – Salva nella cella BR + 0000 0000 00 index6 il contenuto di SR
+</li></ul><div class="vspace"></div><h2>Istruzioni di controllo (Salti a istruzioni o sottoprogrammi)</h2>
+<ul><li><strong>BR [NZP] label</strong> – Esegue un salto all'indirizzo 
+della cella rappresentata da label se si verifica la condizione 
+rappresentata dallo scrivere N e/o Z e/o P (si possono scrivere da una a
+ tutte e 3 le lettere). Se l'ultimo valore scritto in un registro è 
+negativo si verifica N, P se positivo, Z se nullo.
+</li><li><strong>JSR label</strong> – Scrive il PC in R7 ed esegue un salto incondizionato all'indirizzo rappresentato da label
+</li><li><strong>JSRR BR,index6</strong> – Scrive il PC in R7 ed esegue 
+il salto all'indirizzo BR + 0000 0000 00 index6 (per andare ad ogni 
+cella anche non nella pagina corrente come invece fa JSR)
+</li><li><strong>RET</strong> – La prossima istruzione eseguita sarà quella contenuta nella cella con indirizzo scritto in R7
+</li><li><strong>RTI</strong> – Ritorno da un interrupt
+</li><li><strong>TRAP vect8</strong> – Scrive PC in R7 e la prossima istruzione eseguita sarà quella contenuta in vect8
+</li><li><strong>TRAP x21</strong> – Scrive su console il carattere ASCII rappresentato da R0
+</li><li><strong>TRAP x23</strong> – Scrive in R0 il valore del carattere ASCII preso in input da console
+</li><li><strong>TRAP x25</strong> – Arresta il programma
+</li></ul><div class="vspace"></div><h2>Pseudo istruzioni per l'assembler</h2>
+<ul><li><strong>.orig</strong> – inizio del programma, non vuole label davanti
+</li><li><strong>.end</strong> – fine del programma, non vuole label davanti
+</li><li><strong>(label) .blkw N</strong> – riserva un array di N parole che potranno esser usate dal programma (variabili)
+</li><li><strong>(label) .fill X</strong> – scrive nella cella la costante X (non ci si potrà quindi scrivere dopo)
+</li></ul><div class="vspace"></div><h2>Simbologia e Note</h2>
+<ul><li>Le cifre possono essere scritte in binario preceduti da una b, in esadecimale preceduti da una x, o in decimale preceduti da <strong>#</strong>.
+</li><li>Ogni riga può essere preceduta da una <strong>label</strong>, 
+un'etichetta a cui si ci potrà riferire con istruzioni del programma al 
+posto dell'indirizzo delle celle (ovviamente non potrà esser duplicata).
+</li><li><strong>DR</strong>, <strong>SR</strong> e <strong>BR</strong> = Registro di destinazione, “sorgente” e base.
+</li><li><strong>Imm5</strong> = valore da -16 a +15 oppure 5bit da usare nell<strong>'AND</strong> e nell<strong>'ADD</strong>.
+</li><li><strong>index6</strong> = valore da -32 a +31 oppure 6bit da sommare ad un <strong>BR</strong>.
+</li><li><strong>vect8</strong> = 8bit per andare ad un sottoprogramma nelle prime 256 celle.
+</li></ul><div class="vspace"></div><hr>
+<p><a class="wikilink" href="http://www.swappa.it/wiki/Uni/ArchitetturaDegliElaboratori">Torna alla pagina di Architettura degli elaboratori</a>
+</p>
+</div>
+
+						</td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+		<tr>
+			<td id="foot" colspan="4" rowspan="1">
+				<table summary="Wiki: Footer" width="100%" cellspacing="0" cellpadding="0" border="0">
+				<!--PageFooterFmt-->
+				<tbody><tr>
+					<td id="footleft">
+					<span id="footchanges">
+						<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/RecentChanges" title="Ultime modifiche della sezione" accesskey="c">Ultime modifiche</a>
+						<a rel="nofollow" href="http://www.swappa.it/wiki/Site.AllRecentChanges" title="(Tutte le modifiche del sito" accesskey="a">(Tutte)</a>
+					</span>
+					<span id="footeditsb">| 
+						<a rel="nofollow" href="http://www.swappa.it/wiki/Site.SideBar?action=edit" title="Modifica la barra laterale" accesskey="b">edit SideBar</a>
+					</span>
+					</td>
+					<td id="footmiddle">
+					<span id="footlastmod">Ultimo aggiornamento: February 06, 2011, at 03:18 PM</span> 
+					</td>
+					<td id="footright">
+					<span id="footedit">
+						<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=edit" title="Modifica la pagina" accesskey="e">Modifica</a>
+					</span>
+					<span id="foothist">| 
+						<a rel="nofollow" href="http://www.swappa.it/wiki/Uni/ADE-LC2?action=diff" title="Ultime modifiche della pagina" accesskey="h">Cronologia</a>
+					</span> 
+					</td>
+				</tr>
+				<!--/PageFooterFmt-->
+				</tbody></table>
+			</td>
+		</tr>
+	</tbody>
+	</table>
+
+	
+	
+
+ 
+ 
+</body></html>
