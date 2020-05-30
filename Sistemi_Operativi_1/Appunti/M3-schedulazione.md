@@ -217,8 +217,106 @@ Si possono pensare delle politiche di schedulazione specifiche a seconda della c
 * Con processori omogenei, memoria solo condivisa e periferiche accessibili da alcuni: una coda per ogni processore che gestisce la specifica periferica d'interesse;
 * Con processori omogenei, memoria anche locale e periferiche accessibili da alcuni: una coda per la gestione dei processori puo' essere messa nella sua memoria locale;
 * Con processori eterogenei: una coda per ogni processore o una coda per un gruppo di processori omogenei.
-
+ 
 Si possono pensare, nel caso di sistemi multiprocessore, diversi tipi di **multiprocessamento**:
 * **Asimmetrico**: un processore master che esegue il sistema operativo che provvede a gestire la schedulazione di tutti i processi e processori slave che eseguono solo i processi applicativi;
 * **Simmetrico**: ogni processore esegue il sistema operativo e provvede a schedulare i vari processi applicativi.
 
+___
+
+## Politiche di schedulazione per sistemi in tempo reale
+
+### Sistemi in tempo reale
+#### Sistemi in tempo reale stretto
+I sistemi in tempo reale stretto (**Hard Real-Time System**) sono quelli in cui e' obbligatorio che un processo termini la sua computazione entro un tempo massimo garantito dalla sua attivazione.
+
+Per gestire la schedulazione in questo tipo di sistemi esistono alcuni approcci specifici a seconda della tipologia del sistema.
+
+##### Schedulazione con completamento di tempo garantito
+L'algoritmo di schedulazione con tempo massimo garantito prevede che lo schedulatore possa:
+* Accettare un processo garantendone il completamento entro il tempo massimo consentito;
+* Rifiutare il processo.
+
+L'accettazione del processo e' basata sulla possibilita':
+* Di stimare il tempo di completamento del processo;
+* Di prenotazione delle risorse necessarie al processo.
+
+Le politiche di schedulazione che si possono adottare sono quelle tradizionali.
+
+L'aspetto essenziale e' che, in base al carico di lavoro correntemente accettato e quello previsto per il nuovo processo, si effettui un'analisi a priori che porta all'accettazione o al rifiuto del nuovo processo. Il problema e' la **predicibilita'** del tempo di completamento.
+
+##### Schedulazione di processi periodici
+Molti processi, ad esempio nel campo dell'automazione industriale, sono di tipo periodico.
+
+Un processo *P<sub>i</sub>* avra' dunque le seguenti caratteristiche:
+* Un tempo fisso di elaborazione *t<sub>i</sub>*;
+* Una scadenza *d<sub>i</sub>*;
+* Una periodicita' *p<sub>i</sub>*.
+
+Tipicamente questi tempi vengono ordinati in modo crescente:
+> *0 <= t<sub>i</sub> <= d<sub>i</sub> <= p<sub>i</sub>*
+
+Nel caso di processi periodici possiamo utilizzare, come politiche di schedulazione:
+* Round Robin;
+* Priorita' assegnata in base alla scadenza *d<sub>i</sub>* o alla frequenza *1/p</sub>i</sub>* di attivazione del processo.
+
+Il periodo e' specifico rispetto al processo considerato. Altri processi possono avere periodi differenti.
+
+In fase di ammissione viene effettuato un controllo circa la possibilita' di completamento entro la scadenza dichiarata con la politicha di schedulazione adottata.
+
+##### Schedulazione a frequenza monotona
+Un altro algoritmo utilizzato per processi periodici basati su priorita' con meccanismi di pre-emption e' la schedulazione a frequenza monotona.
+
+In questo sistema il tempo di elaborazione e' omogeneo per ogni iterazione del processo *P<sub>i</sub>*.
+
+La priorita' puo' essere assegnata:
+* Usando delle tecniche statiche;
+* In maniera proporzionale alla frequenza *1/p<sub>i</sub>*.
+
+Questa tecnica di schedulazione prevede la pre-emption: se un processo a piu' alta priorita' di esecuzione diventa *Ready-To-Run* e quello che sta venendo eseguito in quell'istante ha una priorita' inferiore, quest'ultimo viene sospeso per rilasciare il processore.
+
+##### Schedulazione a scadenza piu' urgente
+La schedulazione **Earliest-Deadline First** (EDF) puo' essere applicata sia per processi periodici che per processi non-periodici. Inoltre il tempo di elaborazione dei processi non deve piu' necessariamente essere omogeneo.
+
+Questa tecnica prevede che si assegnino delle prioria' ai processi in maniera:
+* Inversamente proporzionale alla loro scadenza *d<sub>i</sub>*;
+* Dinamica, in funzione dei processi che diventano *Ready-To-Run*.
+
+#### Sistemi in tempo reale lasco
+Nei sistemi **Soft Real-Time System** i processi non sono tutti critici e prioritari, ma solo alcuni possono essere processi critici e prioritari per i quali e' necessario operare in un predeterminato periodo di tempo.
+
+Possiamo dunque utilizzare una schedulazione a priorita' separando i processi critici da quelli che non lo sono. La priorita' e':
+* Statica per i processi critici;
+* Eventualmente dinamica per i processi non critici.
+
+Il fattore importante in questi sistemi e' avere una **bassa latenza** di dispatch:
+* Possibilita' di interrompere le chiamate di sistema lunghe, con dei punti specifici dove effettuare la pre-emption;
+* Tramite kernel interrompibile.
+
+___
+
+## Schedulazione dei thread
+
+### Livelli di schedulazione
+La schedulazione puo' essere effettuata in due livelli diversi. 
+
+Se il sistema operativo supporta in modo nativo i thread di un processo allora potremo avere la gestione della schedulazione direttamente a livello del sistema operativo
+
+Alternativamente, se il sistema operativo mette semplicemente a disposizione delle librerie per gestire i thread all'interno del processo applicativo, avremo la gestione della schedulazione che dovra' essere fatta a livello del singolo processo. Il sistema operativo vedra' schedulato l'intero processo e non i singoli thread.
+
+#### Schedulazione nel processo
+La schedulazione a livello di processo (**Thread user-level scheduling**) prevede una visione a livello di contesa delle risorse all'interno del processo (**Process-Contention Scope - PCS**). Questo e' gestito dalla libreria di schedulazione fornita all'interno della libreria dei thread (fornita dal sistema operativo).
+
+In questo caso abbiamo un insieme di processi divisi in un insieme di thread che vengono eseguiti sul sistema operativo.
+
+Lo scheduling dei thread e' quindi interno ai processi, mentre il sistema operativo effettuera' la schedulazione "globale" dei processi.
+
+Le schedulazioni che vengono eseguite nelle librerie fornite dal sistema operativo per i thread sono:
+* A priorita' fisse o modificabili dal programmatore, con pre-emption;
+* First Come, First Served;
+* Round Robin.
+
+#### Schedulazione di sistema
+Nel caso di schedulazione a livello di sistema (**Thread kernel-level scheduling**) oppure si hanno i thread a livello user ma mappati su thread a livello di kernel (con o senza LWP) si ha la possibilita' di vedere i processi divisi per thread, e sara' il sistema operativo a gestire direttamente la schedulazione di ciascuno dei thread. 
+
+La visione della contesa per processore avviene a livello di sistema (**Process-Contention Scope - SCS**).
