@@ -1,0 +1,17 @@
+{
+  "name": "classifier",
+  "version": "1.0.0",
+  "description": "Text classification with Naive-Bayes",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "classifier"
+  ],
+  "author": "gbiagini97@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "bayes": "^1.0.0"
+  }
+}
