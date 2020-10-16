@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "cstring": "c",
+        "*.tcc": "c",
+        "memory_resource": "c",
+        "fstream": "c",
+        "iosfwd": "c",
+        "new": "c",
+        "ostream": "c",
+        "sstream": "c",
+        "stop_token": "c",
+        "streambuf": "c",
+        "*.rh": "c",
+        "exception": "c"
+    }
+}
