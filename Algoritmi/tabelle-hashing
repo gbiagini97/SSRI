@@ -1,0 +1,58 @@
+// Scansione lineare
+H(k,i) = (H(k)+ h * i) mod m
+
+// Scansione quadratica
+H(k,i) = (H(k)+ h * i^2) mod m
+
+// Scansione pseudocasuale
+H(k,i) = (H(k)+ r(i)) mod m
+con r da un generatore di numeri 
+
+// Hashing doppio
+H(k,i) = (H(k)+i * H'(k)) mod m
+
+___________________________________
+
+[60, 39, 79, 11, 80, 32]
+H(k,i) = (H(k)+ i) mod m
+H(k) = k mod 10
+
+H(k,i) = (H(79) + h * i) mod m
+
+[
+    0: 60
+    1: 79
+    2: 11
+    3: 80
+    4: 32
+    5:
+    6:
+    7:
+    8:
+    9: 39
+]
+
+___________________________________
+
+[65, 44, 74, 36, 85, 57]
+H(k,i) = (H(k)+ 7 * i) mod m
+
+H(74, 0) = 4
+H(74, 1) = 1 
+
+H(85, 0) = 5
+H(85, 1) = 2
+
+
+[
+    0:
+    1: 74
+    2: 85
+    3:
+    4: 44
+    5: 65
+    6: 36
+    7: 57
+    8:
+    9: 
+]
