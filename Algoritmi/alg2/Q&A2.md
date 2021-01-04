@@ -666,16 +666,169 @@ int moore(integer[] d, integer[] t, int n, boolean[] r) {
 ___
 
 ## M9: Backtrack
+La tecnica e' costituita da due fasi:
+* La prima in cui viene **costruita la soluzione**;
+* La seconda in cui viene **distrutta la soluzione**.
+
+Un algoritmo puo' dunque essere classificato di tipo Backtrack quando in esso sono previsti strumenti per la costruzione e la distruzione (di una parte) della soluzione.
+
+Ad esempio tutti gli algoritmi di visita di un albero sono di tipo Backtrack in quanto l'elaborazione su un nodo **dipende** dal risultato della visita dei suoi sottoalberi.
+
+Anche la visita di un grafo di tipo DFS e' un algoritmo di tipo Backtrack.
 
 ### Confronto Backtrack vs Greedy
+Dato un problema di selezionare un sottoinsieme di elementi _S_ da un insieme _M_, con _S ⊂ M_:
+* Un algoritmo **Greedy costruttivo** calcola una soluzione _S_, inzializzata all'insieme vuoto, **aggiungendo** ad ogni passo un elemento con una scelta di tipo Greedy;
+* Un algoritmo **Greedy distruttivo** calcola una soluzione _S_ inizializzata ad _M_, **eliminando** ad ogni passo un elemento con una scelta di tipo Greedy;
+* La tecnica **Backtrack** cerca di mettere insieme le due possibilita' in un unico schema.
+
+La tecnica Backtrack e' la tecnica di progetto utilizzata per **algoritmi di enumerazione**, quella classe di algoritmi che provano tutte le possibilita' per ottenere una soluzione o la migliore soluzione per il problema dato.
+
+### Permutazioni
+[Esercizio permutazioni](backtrack_permutazioni.pdf)
+
+### Problema dello string matching
+Consiste nel trovare un'occorrenza di una sequenza P (_pattern_) di _m_ caratteri all'interno di un'altra sequenza T (_testo_) di _n_ caratteri.
 
 ### Bruteforce
+Si cerca di riconoscere il pattern partendo dalla prima posizione del testo e scandendo le successive _m_ posizioni.
+
+Se il pattern non e' individuato, si fa backtrack sulla posizione successiva.
+```C
+// *T testo in cui cercare
+// n lunghezza del testo T
+
+// *P pattern da cercare
+// m lunghezza del pattern P
+
+// k misura l'avanzare in T della verifica dell'eventuale matching
+// i misura la scansione all'interno del testo T
+// j misura la scansione all'interno del pattern P
+int bruteforce(char *P, char *T, int n, int m) {
+    int i, j, k;
+    i = j = k = 1;
+
+    while(i <= n && j <= m) {
+        if(T[i] == P[j]) {
+            i++; j++;
+        } else {
+            k++;
+            i = k = j = 1;
+        }
+    }
+
+    return ((j > m ? k : i));
+}
+```
+Nel caso pessimo ad ogni iterazione, il pattern _P_ ha una corrispondenza in _T_ per _m - 1_ caratteri.
+
+Complessita':
+* Il cursore _k_ assume _n - m + 1_ valori, che e' _O(n)_;
+* Per ogni valore assunto dal cursore _k_, gli indici _i_ e _j_ possono assumere al piu' _m_ valori;
+* Pertanto la complessita' dell'algoritmo e' _O(mn)_.
 
 ### Knuth-Morris-Pratt
+Se l'algoritmo non riconosce _P_ in _T_ a partire da _k_, viene effettuato un backtrack sugli indici _i_ e _j_: questo tipo di backtrack non e' il piu' efficiente.
+
+E' necessario dunque calcolare il nuovo valore di backtrack _back[j]_ da assegnare all'indice _j_. Tale valore e' dato da:
+
+_max{h : h < j - 2 e P[1...h -1]_ = _P[j - h + 1...j - 1]_.
+
+```C
+void KMPSearch(char *pat, char *txt)
+{
+    int M = strlen(pat);
+    int N = strlen(txt);
+ 
+    // create lps[] that will hold the longest prefix suffix
+    // values for pattern
+    int *lps = (int *)malloc(sizeof(int)*M);
+    int j  = 0;  // index for pat[]
+ 
+    // Preprocess the pattern (calculate lps[] array)
+    computeLPSArray(pat, M, lps);
+ 
+    int i = 0;  // index for txt[]
+    while (i < N)
+    {
+      if (pat[j] == txt[i])
+      {
+        j++;
+        i++;
+      }
+ 
+      if (j == M)
+      {
+        printf("Found pattern at index %d \n", i-j);
+        j = lps[j-1];
+      }
+ 
+      // mismatch after j matches
+      else if (i < N && pat[j] != txt[i])
+      {
+        // Do not match lps[0..lps[j-1]] characters,
+        // they will match anyway
+        if (j != 0)
+         j = lps[j-1];
+        else
+         i = i+1;
+      }
+    }
+    free(lps); // to avoid memory leak
+}
+
+// Longest Prefix Suffix
+void computeLPSArray(char *pat, int M, int *lps)
+{
+    int len = 0;  // length of the previous longest prefix suffix
+    int i;
+ 
+    lps[0] = 0; // lps[0] is always 0
+    i = 1;
+ 
+    // the loop calculates lps[i] for i = 1 to M-1
+    while (i < M)
+    {
+       if (pat[i] == pat[len])
+       {
+         len++;
+         lps[i] = len;
+         i++;
+       }
+       else // (pat[i] != pat[len])
+       {
+         if (len != 0)
+         {
+           // This is tricky. Consider the example 
+           // AAACAAAA and i = 7.
+           len = lps[len-1];
+ 
+           // Also, note that we do not increment i here
+         }
+         else // if (len == 0)
+         {
+           lps[i] = 0;
+           i++;
+         }
+       }
+    }
+}
+```
+
+L'algoritmo di Knuth-Morris-Pratt ha una complessita' data dalla somma delle complessita' della funzione _calcola-back_ (computeLPSArray) e dal ciclo `while`:
+* Il calcolo del valore di backtrack compie _O(m)_ confronti;
+* Il `while` esegue _O(n)_ confronti.
+* La complessita' risultante e' _O(n + m)_
 
 ___
 
 ## M10: Programmazione dinamica
 
-### Floyd-Warshall
+### Programmazione dinamica vs Divide et Impera
+
+### Cammini minimi Iterativi - Floyd-Warshall
+
+### String matching approssimato
+
+
 
