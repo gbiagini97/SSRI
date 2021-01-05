@@ -1,4 +1,46 @@
 ## Progettazione di algoritmi
+In generale non esistono ricette per progettare algoritmi efficienti che risolvono un problema computazionale dato; tuttavia esiste uno **schema di progettazione** di algoritmi che puo' portare a risultati accettabili in termini di efficienza.
+
+Durante la fase di progettazione di un algoritmo si possono individuare quattro fasi distinte:
+* **Classificazione del problema**;
+* **Caratterizzazione della soluzione**;
+* **Tecnica di progetto**;
+* **Scelta delle strutture dati**.
+
+### Classificazione del problema
+In questa fase si cerca di verificare l'appartenenza del problema ad una classe piu' generale avente caratteristiche comuni.
+La comprensione del tipo di problema indirizza la progettazione dell'algoritmo di soluzione.
+
+Classi di problemi:
+* Problemi decisionali: la cui risposta e' "SI" o "NO" a seconda che il dato d'ingresso soddisfi o no una certa proprieta';
+* Problemi di ricerca: dove tra tutte le possibili soluzioni si vuole trovare una certa _soluzione ammissibile_ che soddisfi una certa condizione;
+* Problemi di ottimizzazione: alle soluzioni ammissibili e' associata una misura (costo o obiettivo) e si vuole trovare una _soluzione ottima_.
+
+### Caratterizzazione della soluzione
+La caratterizzazione matematica della soluzione, quando e' possibile, suggerisce algoritmi di soluzione talvolta semplici.
+
+**Esempio 1**: Dire se un intero _p > 1_ e' primo.
+
+**Caratterizzazione 1**: _p_ e' primo se e solo se e' divisibile solo per se stesso ed _1_.
+
+**Esempio 2**: Problema dei cammini minimi su un grafo.
+
+**Caratterizzazione 2**: condizioni di Bellman.
+
+### Tecnica di progetto
+Esistono delle tecniche di progetto di algoritmi che possono rendere gli stessi piu' efficienti:
+* **Divide et impera**;
+* **Backtrack**;
+* **Greedy**;
+* **Programmazione dinamica**;
+* **Ricerca locale**.
+
+### Scelta delle strutture dati
+L'impiego di opportune strutture di dati per organizzare l'input del problema puo' migliorare l'efficienza di un algoritmo.
+
+**Esempio 1**: L'utilizzo di uno **heap** per migliorare l'efficienza dell'algoritmo **SelectionSort**.
+
+**Esempio 2**: La modellazione dell'**insieme _S_** nell'algoritmo generale **SPT**.
 
 ## M6: Cammini minimi
 Dato un grafo orientato _G=(V,E)_, ogni coppia di nodi _u, v ∈ E_ avra' associato un costo _w(u, v)_ detto peso.
@@ -823,12 +865,269 @@ L'algoritmo di Knuth-Morris-Pratt ha una complessita' data dalla somma delle com
 ___
 
 ## M10: Programmazione dinamica
+La programmazione dinamica e' un'estensione della tecnica Divide et Impera. Fu introdotta da Bellman nel 1957 per la soluzione di problemi di ottimizzazione.
 
+L'idea principale consiste nello sfruttare tutte le soluzioni dei sottoproblemi piu' piccoli per la costruzione della soluzione dei problemi di dimensione maggiore.
+
+Condizioni di applicazione:
+* Sia possibile **ricombinare** la soluzione di problemi piccoli per ottenere quelle di problemi piu' grandi;
+* La soluzione di un sottoproblema sia **invariante**.
+* I sottoproblemi devono essere **dipendenti**.
+
+Per avere complessita' al piu' polinomiale occorre:
+* Un numero **polinomiale** di sottoproblemi da risolvere;
+* Usare una **tabella** per memorizzare le soluzioni dei sottoproblemi a prescindere dal loro futuro utilizzo;
+* Che il tempo per combinare le soluzioni e trovare la soluzione al problema piu' grande sia **polinomiale**.
+  
 ### Programmazione dinamica vs Divide et Impera
+A differenza della tecnica Divide et Impera, la programmazione dinamica:
+* E' **iterativa**;
+* Risolve sottoproblemi di dimensione crescente;
+* Memorizza i risultati intermedi in una **tabella**.
 
-### Cammini minimi Iterativi - Floyd-Warshall
+In particolare risulta conveniente quando i sottoproblemi **non sono indipendenti** tra loro, in quanto la tenica risolvere i sottoproblemi comuni una volta soltanto e riutilizza la soluzione ottenuta ogni volta che e' necessario.
+
+La tecnica di Divide et Impera e' conveniente quando i sottoproblemi sono indipendenti, in quanto ricalcolerebbe piu' volte la soluzione del sottoproblema in comune.
 
 ### String matching approssimato
+Lo String Matching approssimato consiste nel cercare un pattern _P_ all'interno di un testo _T_ **ammettendo errori** tra _T_ e _P_:
+* I corrispondenti caratteri in _P_ e in _T_ sono diversi;
+* Un carattere in _P_ non compare in _T_;
+* Un carattere in _T_ non compare in _P_;
+
+Il problema quindi consiste nel trovare un'occorrenza _k-_approssimata di _P_ in _T_.
+
+Supponiamo che sia _P_ che _T_ partano con un carattere vuoto in posizione 0.
+
+Gli elementi di _P_ saranno indicati come _p<sub>0</sub>, p<sub>1</sub>, ..., p<sub>m</sub>_, mentre gli elementi di _T_ saranno _t<sub>0</sub>, t<sub>1</sub>, ..., t<sub>n</sub>_.
+
+Definiamo una tabella o matrice _D[i, j]_ con _0 <= i <= m_ e _0 <= j <= n_:
+> _D[i, j]_ = **minimo** numero di errori tra _p<sub>0</sub>, p<sub>1</sub>, ..., p<sub>m</sub>_ ed un segmento di _T_ che termina in _t<sub>j</sub>_.
+
+Inizializziamo la matrice:
+* _D[0, j] = 0_, per ogni _j_;
+* _D[i, 0] = i_, per ogni _i_.
+
+In base a cio, le posizioni di _i_ e _j_ all'interno della tabella _D[i, j]_ potra' essere uguale a:
+* **_D[i - 1, j - 1]_** se _p<sub>i</sub> = t<sub>j</sub>_, altrimenti **_D[i - 1, j - 1] + 1_**: avanzando di un carattere sia in _P_ che in _T_, il numero di errori rimane invariato oppure incrementa di 1;
+* **_D[i - 1, j] + 1_**: avanzando di un carattere in _P_ aumentano di 1 gli errori;
+* **_D[i, j - 1] + 1_**: avanzando di un carattere in _T_ aumentano di 1 gli errori.
+
+![string-matching-approx](res/string-matching-approx.png)
 
 
+```C
+int StringMatchingApprox(char *P, char *T, int n, int m) {
+    /* D matrice [0..n]x[0..n] */
+    int i, j, min;
 
+    /* Inizializzazione della matrice */
+    for(j = 0; j <= n ; j++) D[0,j] = 0;
+    for(i = 0; i <= m ; i++) D[i,0] = i;
+
+    /* Calcolo dei minimi delle posizioni adiacenti della posizione che stiamo calcolando */
+    for(i = 0; i <= m ; i++)
+        for(j = 1; j <= n ; j++) {
+            
+            min = D[i - 1, j - 1];
+            min = (P[i] == T[j] ? min : min + 1);
+            min = (D[i - 1, j] + 1 < min ? D[i - 1, j] + 1 : min);
+            min = (D[i, j - 1] + 1 < min ? D[i, j - 1] + 1 : min);
+            D[i,j] = min;
+        }
+
+        /* Viene scandita l'n-esima riga per cercare il numero minimo di differenze tra il pattern e il testo */
+        min = D[m,0]; 
+        i = 0;
+
+        for(j = 1; j <= n; j++) 
+            if(D[m,j] < min) {
+                min = D[m,j];
+                i = j;
+            }
+        
+        return(i);
+}
+```
+
+L'algoritmo riempie una matrice di dimensioni _n x m_. Ogni posizione della matrice, compresa la prima riga e la prima colonna e' calcolata in tempo costante.
+
+La complessita' e' dunque _O(nm)_.
+
+La procedura puo' essere modificata senza aumentarne la complessita' anche per ricavare l'occorrenza approssimata e i relativi errori.
+
+## M11: Teoria della complessita'
+
+### Problemi difficili
+artendo dalla definizione di **Domino Limitato** e' possibile determinare quando un problema e' facile o difficile:
+> Dati un intero positivo _n_ ed un insieme finito _D_ di _m_ tipi di **tessere orientate** e' possibile ricoprire un'area quadrata di lato _n_ con copie delle tessere in _d_ in modo che:
+> * Nessuna tessera sia ruotata;
+> * Una particolare tessera _d ∈ D_ occupi la posizione piu' in basso a sinistra;
+> * Due tessere che si toccano abbiano i lati adiacenti dello stesso colore.
+
+Una **tessera orientata** e' un quadrato di lato unitario diviso in quattro parti dalle diagonali, con ciascun quarto colorato con un colore.
+
+![M11_domino_limitato](../md_resources/M11_domino_limitato.png)
+
+Un algoritmo per la soluzione del domino limitato che prova tutte le combinazioni dovra' generare _m<sup>n<sup>2</sup>-1</sup>_ combinazioni, dunque ha una complessita' superpolinomiale.
+
+Sfortunatamente, non e' noto un algoritmo di soluzione migliore di quello che prova tutte le soluzioni. Rientra dunque nella classe di **problemi difficili** come i problemi seguenti:
+* **Problema della colorazione (versione decisionale)**:
+  * Dato un grafo non orientato ed un intero _k_, e' possibile colorare i nodi del grafo usando al piu' _k_ colori in modo che ogni nodo sia colorato con un colore diverso da tutti i nodi adiacenti?
+* **Problema della cricca (versione decisionale)**:
+  * Dato un grafo non orientato ed un intero _k_, esiste un sottoinsieme di almeno _k_ nodi tutti mutuamente adiacenti (da ogni nodo posso andare in tutti gli altri nodi appartenenti alla cricca)?
+* **Problema del commesso viaggiatore (versione decisionale)**:
+  * Date _n_ citta' e le distanze tra di esse, ed un intero _k_, e' possibile partire da una citta', attraversare ogni citta' esattamente una volta, e ritornare alla citta' di partenza percorrendo una distanza complessiva non superiore a _k_?
+
+I problemi introdotti appartengono alla stessa classe di problemi computazionalmente correlati, ognuno puo' essere risolto in tempo superpolinomiale, ma nessun in tempo polinomiale.
+
+Se **uno solo** fosse risolubile in tempo polinomiale allora lo sarebbero tutti.
+
+La **tesi non dimostrata** e' che tale algoritmo polinommiale non esiste.
+
+La soluzione di un problema in forma decisionale e' la risposta **si o no** a seconda che il dato d'ingresso soddisfi una certa proprieta'.
+
+### Certificati polinomiali
+I problemi difficili hanno una caratteristica in comune, e' abbastanza facile certificare la corretteza di una soluzione.
+
+Formalmente, per tutti questi problemi, esiste un **certificato polinomiale**: e' un algoritmo che, data una presunta soluzione del problema, verifica in tempo polinomiale che sia effettivamente una soluzione che fornisce la risposta **si**.
+
+Esempio di certificato polinomiale per il problema del commesso viaggiatore: modellando il problema su grafo, una soluzione del problema e' una sequenza di _n_ nodi.
+
+In **tempo lineare** si verifica che:
+* Solo il nodo finale ed il nodo iniziale sono identici;
+* I nodi sono tra loro effettivamente connessi;
+* La somma delle distanze sia minore di _k_.
+
+
+### Non determinismo
+
+Un algoritmo non deterministico e' un algoritmo che, al momento di effettuare una **decisione**, effettua sempre quella migliore, ossia quella che porta alla soluzione corretta.
+
+Utilizzeremo, per indicare le decisioni, 3 istruzioni speciali:
+* `choice(I)`: che sceglie arbitrariamente il migliore elemento dall'insieme finito _I_;
+* `failure`: che blocca la computazione in uno stato di fallimento;
+* `success`: che blocca la computazione in uno stato di successo.
+
+L'istruzione `choice` puo' essere paragonata ad un oracolo che ad ogni chiamata indovina sempre la scelta giusta. Questa scelta puo' essere vista come se la `choice` facesse tante copie dell'algoritmo con parametri diversi, per ognuna trovasse la soluzione corrispondente e tra tutte le soluzioni scegliesse quella migliore.
+
+
+L'algoritmo non deterministico utilizza un certificato polinomiale per **certificare** la correttezza della soluzione generata da una sequenza choice.
+
+Esempio di algoritmo non deterministico per il problema della cricca:
+```C
+void ndcricca(grafo G=(N, A), int n, int k) {
+    int i, j, h;
+    boolean S[n];
+
+    // creazione non deterministica della soluzione
+    for(i = 0; i < n; i++) S[i] = choice({true, false});
+
+    h = 0;
+    for(i = 0; i < n; i++) {
+        if(S[i]) {
+        
+            h++;
+            for(j = 0; j < i - 1; j++)
+                if(S[j] && (i,j) ∉ A) failure;
+        }
+    }
+
+    // certificato polinomiale
+    if(h >= k)
+        success;
+    else
+        failure;
+}
+```
+Un algoritmo non deterministico e' caratterizzato da una computazione ad albero radicato, detto **albero delle scelte** dove:
+* Un nodo interno rappresenta una **soluzione intermedia**;
+* Una foglia rappresenta una **soluzione**.
+  
+### Enumerazione
+Poiche' il non determinismo **non e' realistico** occorre **simulare** il comportamento di un algoritmo non deterministico con uno deterministico.
+
+Ossia, **generare** ed **esplorare** deterministicamente lo spazio delle soluzioni, **visitando sistematicamente** l'albero delle scelte che ha un numero superpolinomiale di nodi.
+
+Un algoritmo enumerativo e' dunque un algoritmo che esegue una visita, quanto piu' possibile intelligente, dell'albero delle scelte.
+
+Supponiamo che tutti i parametri siano globali nell'esempio enumerativo per il problema della cricca:
+```C
+void enum_cricca(int i ,int h) {
+    int j;
+    boolean cricca;
+
+    if(i <= n) {
+        S[i] = false;
+        enum_cricca(i + 1, h);
+
+        S[i] = true;
+
+        for(j = 0; j < i - 1; j++)
+            if(S[j] && (i, j) ∉ A) cricca = FALSE;
+
+        if(cricca)
+            if(h + 1 = k)
+                success;
+            else 
+                enum_cricca(i + 1, h + 1);
+    }
+}
+```
+
+Per ridurre l'esplorazione si puo' sostituire il controllo `i <= n` con `k - h <= n - i + 1` dove:
+* `n - i + 1`: e' il numero di nodi ancora da considerare;
+* `k - h`: e' il numero di nodi mancanti per completare la cricca.
+
+### Classificazione dei problemi
+Un problema e' **difficile** quando ammette solo un algoritmo enumerativo che, nel caso pessimo, esplora completamente l'albero delle scelte.
+
+Un problema e' **facile** quando ammette un algoritmo capace di percorrere un cammino radice-foglia nell'albero delle scelte.  
+
+Utilizziamo i concetti di problema facile e difficile per classificare i problemi computazionali rispetto al loro grado di difficolta'.
+
+Un algoritmo polinomiale si comporta come un algoritmo non deterministico rispetto alla visita dell'albero delle scelte: ci si puo' chiedere se esiste una simulazione polinomiale di un algoritmo non deterministico, ma attualmente questo non e' noto.
+
+Si e' individuata una classe di problemi detti **problemi NP-completi** per i quali:
+* Si conoscono solo algoritmi polinomiali non deterministici;
+* Non si conosce alcun algoritmo polinomiale deterministico;
+* Se si trovasse un algoritmo polinomiale deterministico per uno solo dei problemi appartenenti alla classe, allora si potrebbe trovare un algoritmo per tutti gli altri problemi appartenenti alla classe.
+
+La classe P e' la classe di tutti i problemi decisionali che sono risolvibili in tempo polinomiale con algoritmi **deterministici**.
+
+La classe NP e' la classe di tutti i problemi decisionali che sono risolvibili in tempo polinomiale con algoritmi **non deterministici**.
+
+### Riducibilita' polinomiale
+Dati A e B due problemi decisionali, si dice che **A si riduce in tempo polinomiale a B**, e si scrive **_A ∝ B_** (A e' approssimativamente proporzionale a B, \propto), se esiste una funzione _f_ di trasformazione:
+> _f: (dati ingresso A) -> (dati ingresso B)_
+tale che:
+* _f_ e' computabile in tempo **polinomiale** con un algoritmo deterministico;
+* _x_ e' un dato di ingresso per cui A ha risposta **SI, se e solo se _f(x)_ e' un dato di ingresso per cui B ha risposta SI**.
+
+
+Osserviamo che dati A e B due problemi decisionali in NP, se _A ∝ B_, allora significa che si trasforma un qualsiasi dato d'ingresso per A in un particolare ingresso per B. Inoltre:
+* Se _B ∈ NP_ allora _A ∈ NP_;
+* Se _B ∈ P_ allora _A ∈ P_;
+* Se A e' _Ω(p(n))_ e _f_ e' _O(p(n))_ allora B e' _Ω(p(n))_.
+
+### Teorema di Cook-Levin
+Problema:
+> Esiste un particolare problema decisionale in NP tale che se si dimostrasse la sua appartenenza a P, allora dovrebbe risultare sicuramente P = NP?
+
+Il teorema di Cook-Levin osserva che:
+> Ogni problema in NP si riduce in tempo polinomiale al Domino Limitato.
+
+Da questo teorema si possono evincere le conseguenze:
+* P = NP se e solo se _Domino Limitato ∈ P_;
+* A e' detto **NP-arduo** se _B ∝ A_ per ogni _B ∈ NP_;
+* A e' detto **NP-completo** se e' NP-arduo e _A ∈ NP_;
+
+
+Grazie al teorema di Cook-Levin e' possibile derivare un procedimento per dimostrare che un problema decisionale A e' NP-completo:
+* Dimostrare che _A ∈ NP_;
+* Dimostrare che esiste un problema B NP-completo tale che _B ∝ A_.
+
+Non e' dunque necessario mostrare ogni volta che _B ∝ A_ per ogni _B ∈ NP_.
+
+Un albero di riduzioni tra problemi in NP:
+![M11_riduzioni_NP](../md_resources/M11_riduzioni_NP.png)
